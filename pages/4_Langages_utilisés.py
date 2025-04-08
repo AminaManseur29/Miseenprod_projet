@@ -30,7 +30,7 @@ st.markdown(
 )
 
 # Chargement des données
-df = pd.read_csv("stackoverflow_full.csv", index_col="Unnamed: 0")
+df = pd.read_csv("data/stackoverflow_full.csv", index_col="Unnamed: 0")
 
 # Langages informatiques utilisés
 languages = [str(cat).split(";") for cat in df["HaveWorkedWith"]]

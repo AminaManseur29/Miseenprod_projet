@@ -34,7 +34,7 @@ st.markdown(
 )
 
 # Chargement des données
-stack_users_data = pd.read_csv("stackoverflow_full.csv", index_col="Unnamed: 0")
+stack_users_data = pd.read_csv("data/stackoverflow_full.csv", index_col="Unnamed: 0")
 
 # Recodage des variables catégorielles (ENG -> FR)
 stack_users_data_fr = labels_translation(stack_users_data)
@@ -129,7 +129,7 @@ st.markdown(
     Environ 50% des répondants ont un niveau licence, et 25% un master.
     La plus grande partie de la base travaille dans le développement (plus de 91%).
 
-    Le nombre d'années de codage est très dispersé, 
+    Le nombre d'années de codage est très dispersé,
     atteignant jusqu'à 50 ans pour les répondants ayant le plus d'ancienneté de codage.
     On remarque toutefois un pic autour de 10 années de codage
     (ce qui est cohérent avec l'âge plutôt jeune des répondants).

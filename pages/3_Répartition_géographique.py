@@ -1,22 +1,19 @@
 """
-Ce module génère la répartition géographique.
+Ce module génère la répartition géographique des répondants
 """
 
 import streamlit as st
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import plotly
-import plotly.express as px
-from bs4 import BeautifulSoup
-import requests
 
-from src.data_preprocessing import labels_translation, get_iso_country_codes, add_iso_codes
-from src.plot_utils import plot_hist
+from src.data_preprocessing import (
+    get_iso_country_codes,
+    add_iso_codes,
+    add_continent_info,
+)
+from src.plot_utils import plot_choropleth_map
 
 st.set_page_config(
-    page_title="Répartition géographique",
-    page_icon=":chart_with_upwards_trend:"
+    page_title="Répartition géographique", page_icon=":chart_with_upwards_trend:"
 )
 
 with st.sidebar:
@@ -36,96 +33,64 @@ st.markdown(
 )
 
 # Chargement des données
-stack_users_data = pd.read_csv("stackoverflow_full.csv", index_col="Unnamed: 0")
+stack_users_data = pd.read_csv("data/stackoverflow_full.csv", index_col="Unnamed: 0")
 
 # Ajout d'une colonne Code ISO (nécessaire pour les cartes)
 iso_df = get_iso_country_codes()
-stack_users_data = add_iso_codes(add_iso_codes, iso_df)
+stack_users_data = add_iso_codes(stack_users_data, iso_df)
 
 # Tableau nombre de répondants et taux d'emploi par pays
-df_carto = stack_users_data.groupby(['Country', 'ISO'])['Employed'].agg(['count', 'mean']).reset_index()
-df_carto.columns = ['Country', 'ISO', 'count', 'percentage']
-df_carto['percentage'] *= 100
+df_carto = (
+    stack_users_data.groupby(["Country", "ISO"])["Employed"]
+    .agg(["count", "mean"])
+    .reset_index()
+)
+df_carto.columns = ["Country", "ISO", "count", "percentage"]
+df_carto["percentage"] *= 100
 
 # 1. Carte du nb de développeurs par pays
-fig_nb = px.choropleth(df_carto, locations="ISO",
-                color="count",
-                hover_name="Country",
-                color_continuous_scale=px.colors.sequential.Sunsetdark)
-
-fig_nb.update_layout(
-    title_text="Nombre de répondants par pays",
-    coloraxis_colorbar_title_text="Effectif",
+fig_nb = plot_choropleth_map(
+    df=df_carto,
+    location_col="ISO",
+    value_col="count",
+    hover_col="Country",
+    title="Nombre de répondants par pays",
+    colorbar_title="Effectif",
 )
 
 # 2. Carte du taux d'emploi par pays
-fig_taux = px.choropleth(df_carto[df_carto['count'] > 100], locations="ISO",
-                    color="percentage",
-                    hover_name="Country",
-                    color_continuous_scale=px.colors.sequential.Sunsetdark)
-
-fig_taux.update_layout(
-    title_text="Taux d'emploi par pays (pour les pays ayant au moins 100 répondants)",
-    coloraxis_colorbar_title_text = "Taux d'emploi",
+fig_taux = plot_choropleth_map(
+    df=df_carto,
+    location_col="ISO",
+    value_col="percentage",
+    hover_col="Country",
+    filter_col="count",
+    min_value=100,
+    title="Taux d'emploi par pays (≥ 100 répondants)",
+    colorbar_title="Taux d'emploi",
 )
 
 # 3. Tableau nombre de répondants et taux d'emploi par continent
 
-# Dictionnaire des continents
-cont_pays = pd.read_excel("Countries_Languages.xls", skiprows=1)
-continents_dict = cont_pays.set_index('Country')['Continental Region'].to_dict()
-
-# Ajout des valeurs manquantes
-dict_missing_values = {'United Kingdom of Great Britain and Northern Ireland' : 'Europe',
-                       'Russian Federation': 'Europe',
-                       'United States of America' : 'North,Central America',
-                       'Viet Nam' : 'Asia (West)',
-                       'Iran, Islamic Republic of...' : 'Asia (West)',
-                       'Hong Kong (S.A.R.)': 'Asia (East)',
-                       'Belarus': 'Europe',
-                       'The former Yugoslav Republic of Macedonia' : 'Europe',
-                       'Venezuela, Bolivarian Republic of...' : 'South America',
-                       'Syrian Arab Republic' : 'Asia (West)',
-                       'Taiwan' : 'Asia (East)',
-                       'South Korea' : 'Asia (East)',
-                       'Cameroon' : 'Africa',
-                       'Republic of Moldova' : 'Europe',
-                       "Lao People's Democratic Republic" : 'Asia (East)',
-                       'Democratic Republic of the Congo' : 'Africa',
-                       'United Republic of Tanzania' : 'Africa',
-                       'Kosovo' : 'Europe',
-                       'Congo, Republic of the...' : 'Africa',
-                       'Republic of Korea' : 'Asia (East)',
-                       'Saint Kitts and Nevis' : 'North,Central America',
-                       'Monaco' : 'Europe',
-                       'Libyan Arab Jamahiriya' : 'Asia (West)',
-                       'Palestine' : 'Asia (West)',
-                       'Isle of Man' : 'Europe',
-                       "Côte d'Ivoire" : 'Africa',
-                       'Senegal' : 'Africa',
-                       'Saint Lucia' : 'North,Central America',
-                       'Saint Vincent and the Grenadines' : 'North,Central America'
-                      }
-
-continents_dict.update(dict_missing_values)
-
-# Ajout de la colonne Continent
-df['Continent'] = df['Country'].map(continents_dict)
-
-df["Continent"] = df["Continent"].replace(
-    ["Africa", "Asia (East)", "Asia (South)", "Asia (West)", "North,Central America", "South America", "Oceania"],
-    ["Afrique", "Asie", "Asie", "Asie", "Amérique du Nord et Centrale","Amérique du Sud", "Océanie"]
-)
+stack_users_data = add_continent_info(stack_users_data, "data/Countries_Languages.xls")
 
 # Tableau des répondants et emploi en fonction des continents
-df_carto_cont = df.groupby(['Continent'])['Employed'].agg(['count', 'mean'])
-df_carto_cont = df_carto_cont.sort_values(by = "count", ascending = False).reset_index()
-df_carto_cont["mean"] = (df_carto_cont["mean"]*100).round(2)
+df_carto_cont = stack_users_data.groupby(["Continent"])["Employed"].agg(
+    ["count", "mean"]
+)
+df_carto_cont = df_carto_cont.sort_values(by="count", ascending=False).reset_index()
+df_carto_cont["mean"] = (df_carto_cont["mean"] * 100).round(2)
 
-df_carto_cont.columns = ['Continent', 'Nombre de répondants', "Taux d'emploi"]
+df_carto_cont.columns = ["Continent", "Nombre de répondants", "Taux d'emploi"]
 
 # Choix du graphe
-tab_nb, tab_taux, tab_cont = st.tabs(["Nombre de répondants par pays", "Taux d'emploi par pays", "Nombre de répondants et taux d'emploi par continent"])
+tab_nb, tab_taux, tab_cont = st.tabs(
+    [
+        "Nombre de répondants par pays",
+        "Taux d'emploi par pays",
+        "Nombre de répondants et taux d'emploi par continent",
+    ]
+)
 
 with tab_nb:
     st.plotly_chart(fig_nb)
@@ -137,8 +102,20 @@ with tab_cont:
 st.markdown(
     """
 
-    Les répondants sont répartis sur tous les continents de façon relativement satisfaisante. Ainsi, l'Europe et l'Amérique du Nord et Centrale concentrent plus de 70% des répondants. L'Asie est aussi plutôt bien représentée, avec 17% des répondants. Le principal écueil est que l'Amérique du Sud, l'Océanie et l'Afrique sont peu représentés dans la base. Les pays les plus représentés sont les États-Unis (20% des répondants), l'Allemagne (7%), l'Inde (7%), le Royaume-Uni (6%), le Canada, la France et le Brésil (entre 3.5 et 4%). 
+    Les répondants sont répartis sur tous les continents de façon relativement satisfaisante. Ainsi,
+    l'Europe et l'Amérique du Nord et Centrale concentrent plus de 70% des répondants. L'Asie est
+    aussi plutôt bien représentée, avec 17% des répondants. Le principal écueil est que l'Amérique
+    du Sud, l'Océanie et l'Afrique sont peu représentés dans la base. Les pays les plus représentés
+    sont les États-Unis (20% des répondants), l'Allemagne (7%), l'Inde (7%), le Royaume-Uni (6%),
+    le Canada, la France et le Brésil (entre 3.5 et 4%).
 
-    Le taux d'emploi est globalement uniforme entre les pays et continents, entre 50 et 60%. On note tout de même quelques valeurs élevées (dépassant les 65% voire atteignant plus de 70% pour le Pérou et le Sri Lanka). Ces valeurs sont toutefois à relativiser du fait de la faible taille des échantillons de répondants dans ces pays. Les valeurs les plus faibles, entre 40 et 45%, sont trouvées en Géorgie, Biélorussie, Ukraine et Russie. Ces valeurs sont surtout fiables pour la Russie et l'Ukraine (où les échantillons de répondants sont suffisants). Du point de vue des continents, le taux d'emploi semble légèrement plus faible en Europe que dans les autres régions, et légèrement plus élevé en Afrique.   
+    Le taux d'emploi est globalement uniforme entre les pays et continents, entre 50 et 60%.
+    On note tout de même quelques valeurs élevées (dépassant les 65% voire atteignant plus de 70%
+    pour le Pérou et le Sri Lanka). Ces valeurs sont toutefois à relativiser du fait de la faible
+    taille des échantillons de répondants dans ces pays. Les valeurs les plus faibles, entre 40 et
+    45%, sont trouvées en Géorgie, Biélorussie, Ukraine et Russie. Ces valeurs sont surtout fiables
+    pour la Russie et l'Ukraine (où les échantillons de répondants sont suffisants). Du point de
+    vue des continents, le taux d'emploi semble légèrement plus faible en Europe que dans les
+    autres régions, et légèrement plus élevé en Afrique.
     """
 )

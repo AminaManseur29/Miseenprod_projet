@@ -28,7 +28,7 @@ st.markdown(
 )
 
 # Chargement des données
-df = pd.read_csv("stackoverflow_full.csv", index_col="Unnamed: 0")
+df = pd.read_csv("data/stackoverflow_full.csv", index_col="Unnamed: 0")
 
 # Recodage des variables catégorielles (ENG -> FR)
 df_fr = df.copy()

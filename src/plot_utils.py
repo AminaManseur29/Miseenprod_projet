@@ -56,28 +56,99 @@ def plot_hist_orders(data, col, title, cat_orders):
     )
     return fig
 
-def plot_map(data_geo, col):
+def plot_map(df_carto, min_respondents=100):
     """
-        Plots a map of the column required (col) and gives a title. 
-    Args : 
-        data_geo (DataFrame): dataframe used 
-        col (str): column of interest 
-        title (str) : title 
-        cat_orders(dict) : dictionnary of the groups on which to plot 
-    Returns : 
-        Map of the data and size 
-    """ 
-    fig_geo = px.choropleth(data_geo[data_geo['count'] > 100], locations="ISO",
-                    color="percentage",
-                    hover_name="Country",
-                    color_continuous_scale=px.colors.sequential.Sunsetdark)
+    Create a choropleth map showing the employment rate per country 
+    (only for countries with at least `min_respondents`).
 
-    fig_geo.update_layout(
-        title_text="Taux d'emploi par pays (pour les pays ayant au moins 100 répondants)",
+    Parameters:
+    ----------
+    df_carto : pandas.DataFrame
+        DataFrame with columns 'ISO', 'Country', 'count', and 'percentage'.
+    min_respondents : int, optional
+        Minimum number of respondents required to display a country.
+
+    Returns:
+    -------
+    plotly.graph_objects.Figure
+        Choropleth map figure.
+    """
+    df_filtered = df_carto[df_carto["count"] > min_respondents]
+
+    fig_taux = px.choropleth(
+        df_filtered,
+        locations="ISO",
+        color="percentage",
+        hover_name="Country",
+        color_continuous_scale=px.colors.sequential.Sunsetdark,
+    )
+
+    fig_taux.update_layout(
+        title_text=(
+            f"Taux d'emploi par pays (≥ {min_respondents} répondants)"
+        ),
         coloraxis_colorbar_title_text="Taux d'emploi",
     )
-    return fig_geo
 
+    return fig_taux
+
+def plot_choropleth_map(
+    df,
+    location_col,
+    value_col,
+    hover_col,
+    color_scale=px.colors.sequential.Sunsetdark,
+    title="",
+    colorbar_title="",
+    filter_col=None,
+    min_value=None
+):
+    """
+    General-purpose function to generate a choropleth map.
+
+    Parameters:
+    ----------
+    df : pandas.DataFrame
+        Input data with at least the columns for locations and values.
+    location_col : str
+        Column name containing ISO codes or geographic codes.
+    value_col : str
+        Column name to be represented by color.
+    hover_col : str
+        Column name to show when hovering.
+    color_scale : list, optional
+        Plotly color scale to use.
+    title : str, optional
+        Title of the map.
+    colorbar_title : str, optional
+        Title for the color scale bar.
+    filter_col : str, optional
+        Column to apply a minimum value filter on (e.g., count of respondents).
+    min_value : float, optional
+        Minimum value required to include a row in the map.
+
+    Returns:
+    -------
+    plotly.graph_objects.Figure
+        A choropleth map.
+    """
+    if filter_col and min_value is not None:
+        df = df[df[filter_col] > min_value]
+
+    fig = px.choropleth(
+        df,
+        locations=location_col,
+        color=value_col,
+        hover_name=hover_col,
+        color_continuous_scale=color_scale,
+    )
+
+    fig.update_layout(
+        title_text=title,
+        coloraxis_colorbar_title_text=colorbar_title,
+    )
+
+    return fig
 
 def make_wordcloud(data, col):
     """

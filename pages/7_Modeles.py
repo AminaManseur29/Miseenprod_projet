@@ -10,7 +10,7 @@ import joblib
 # Set up data
 # ==========================
 
-file_path = "stackoverflow_full.csv"
+file_path = "data/stackoverflow_full.csv"
 
 df = pd.read_csv(file_path)
 

@@ -26,7 +26,7 @@ st.markdown(
 )
 
 # Chargement des données
-stack_users_data = pd.read_csv("stackoverflow_full.csv", index_col="Unnamed: 0")
+stack_users_data = pd.read_csv("data/stackoverflow_full.csv", index_col="Unnamed: 0")
 
 # Recodage des variables catégorielles (ENG -> FR)
 stack_users_data_fr = labels_translation(stack_users_data)
