@@ -1,0 +1,6 @@
+openpyxl
+dalex
+statsmodels
+wordcloud
+xgboost
+xlrd
