@@ -6,14 +6,28 @@ import os
 import streamlit as st
 import pandas as pd
 from dotenv import load_dotenv
+from loguru import logger
 
 from src.data_preprocessing import labels_translation
 from src.plot_utils import plot_hist, plot_hist_orders
 
+# Initialisation du logger
+logger.add(
+    "logs/distribution_variables.log",
+    rotation="1 MB",
+    retention="10 days",
+    level="DEBUG",
+)
+logger.info("Début de la page Streamlit : Distribution des variables principales")
+
+# Chargement des variables d'environnement
 load_dotenv()
+stack_users_data_path = os.environ.get(
+    "stack_users_data_path", "data/StackOverflowSurvey.csv"
+)
+logger.debug(f"Chemin du fichier StackOverflow récupéré : {stack_users_data_path}")
 
-stack_users_data_path = os.environ.get("stack_users_data_path", "data/StackOverflowSurvey.csv")
-
+# Configuration de la page
 st.set_page_config(
     page_title="Distribution des variables principales",
     page_icon=":chart_with_upwards_trend:",
@@ -39,10 +53,27 @@ st.markdown(
 )
 
 # Chargement des données depuis le répertoire sspcloud
-stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
+try:
+    stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
+    logger.success(f"Fichier chargé avec succès : {stack_users_data_path}")
+except Exception as e:
+    logger.error(f"Erreur lors du chargement du fichier : {e}")
+    st.error(
+        "Impossible de charger les données. Veuillez vérifier le chemin ou le format du fichier."
+    )
+    st.stop()
 
-# Recodage des variables catégorielles (ENG -> FR)
-stack_users_df_fr = labels_translation(stack_users_df)
+# Traduction des labels
+try:
+    stack_users_df_fr = labels_translation(stack_users_df)
+    logger.info("Traduction des labels effectuée avec succès")
+except Exception as e:
+    logger.error(f"Erreur lors de la traduction des labels : {e}")
+    st.error("Erreur lors du traitement des données.")
+    st.stop()
+
+# Génération des graphiques
+logger.info("Début de la génération des graphiques")
 
 # 1. Graphe Age
 fig_age = plot_hist(stack_users_df_fr, "Age", "Distribution de l'âge")
@@ -72,9 +103,7 @@ fig_branch = plot_hist(
 )
 
 # 5. Graphe Années de code
-fig_code = plot_hist(
-    stack_users_df_fr, "YearsCode", "Distribution des années de code"
-)
+fig_code = plot_hist(stack_users_df_fr, "YearsCode", "Distribution des années de code")
 
 # 6. Graphe Années de code pro
 fig_codepro = plot_hist(
@@ -92,6 +121,8 @@ fig_info = plot_hist(
     "ComputerSkills",
     "Distribution des compétences en informatique",
 )
+
+logger.success("Tous les graphiques ont été générés avec succès")
 
 # Choix du graphe
 tab_age, tab_genre, tab_ed, tab_branch, tab_code, tab_codepro, tab_salaire, tab_info = (
@@ -148,3 +179,5 @@ st.markdown(
     valeurs extrêmes de répondants maitrisant plus de 50 langages.
     """
 )
+
+logger.info("Fin de l'exécution de la page Distribution des variables principales")

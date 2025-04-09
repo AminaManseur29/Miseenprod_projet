@@ -5,3 +5,4 @@ wordcloud
 xgboost
 xlrd
 streamlit
+loguru

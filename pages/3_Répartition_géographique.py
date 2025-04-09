@@ -6,6 +6,7 @@ import os
 import streamlit as st
 import pandas as pd
 from dotenv import load_dotenv
+from loguru import logger
 
 from src.data_preprocessing import (
     get_iso_country_codes,
@@ -14,14 +15,31 @@ from src.data_preprocessing import (
 )
 from src.plot_utils import plot_choropleth_map
 
-load_dotenv()
+# Initialisation du logger
+logger.add(
+    "logs/repartition_geographique.log",
+    rotation="1 MB",
+    retention="10 days",
+    level="DEBUG",
+)
+logger.info("Début de la page Streamlit : Répartition géographique")
 
-stack_users_data_path = os.environ.get("stack_users_data_path", "data/StackOverflowSurvey.csv")
+
+# Chargement des variables d'environnement
+load_dotenv()
+stack_users_data_path = os.environ.get(
+    "stack_users_data_path", "data/StackOverflowSurvey.csv"
+)
 countries_lang_data_path = os.environ.get(
     "countries_lang_data_path", "data/CountryLanguageStats.xls"
-    )
+)
 iso_url = os.environ.get("iso_url", "https://www.iban.com/country-codes")
 
+logger.debug(f"Chemin des données StackOverflow : {stack_users_data_path}")
+logger.debug(f"Chemin des données pays/langue : {countries_lang_data_path}")
+logger.debug(f"URL des codes ISO : {iso_url}")
+
+# Configuration de la page Streamlit
 st.set_page_config(
     page_title="Répartition géographique", page_icon=":chart_with_upwards_trend:"
 )
@@ -43,21 +61,40 @@ st.markdown(
 )
 
 # Chargement des données
-stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
+try:
+    stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
+    logger.success("Données StackOverflow chargées avec succès.")
+except Exception as e:
+    logger.error(f"Erreur lors du chargement des données : {e}")
+    st.error("Erreur lors du chargement des données.")
+    st.stop()
 
-# Ajout d'une colonne Code ISO (nécessaire pour les cartes)
-iso_df = get_iso_country_codes(iso_url)
-stack_users_df = add_iso_codes(stack_users_df, iso_df)
+# Ajout des codes ISO
+try:
+    iso_df = get_iso_country_codes(iso_url)
+    stack_users_df = add_iso_codes(stack_users_df, iso_df)
+    logger.info("Ajout des codes ISO réussi.")
+except Exception as e:
+    logger.error(f"Erreur lors de l'ajout des codes ISO : {e}")
+    st.error("Erreur lors de la récupération des codes ISO.")
+    st.stop()
 
-# Tableau nombre de répondants et taux d'emploi par pays
-df_carto = (
-    stack_users_df.groupby(["Country", "ISO"])["Employed"]
-    .agg(["count", "mean"])
-    .reset_index()
-)
-df_carto.columns = ["Country", "ISO", "count", "percentage"]
-df_carto["percentage"] *= 100
+# Création du DataFrame pour la carte
+try:
+    df_carto = (
+        stack_users_df.groupby(["Country", "ISO"])["Employed"]
+        .agg(["count", "mean"])
+        .reset_index()
+    )
+    df_carto.columns = ["Country", "ISO", "count", "percentage"]
+    df_carto["percentage"] *= 100
+    logger.info("Tableau de base pour les cartes généré.")
+except Exception as e:
+    logger.error(f"Erreur lors de l'agrégation des données : {e}")
+    st.error("Erreur lors de la préparation des données pour les cartes.")
+    st.stop()
 
+# Création des cartes
 # 1. Carte du nb de développeurs par pays
 fig_nb = plot_choropleth_map(
     df=df_carto,
@@ -80,17 +117,28 @@ fig_taux = plot_choropleth_map(
     colorbar_title="Taux d'emploi",
 )
 
-# 3. Tableau nombre de répondants et taux d'emploi par continent
-stack_users_df = add_continent_info(stack_users_df, countries_lang_data_path)
+# Ajout des infos continentales
+try:
+    stack_users_df = add_continent_info(stack_users_df, countries_lang_data_path)
+    logger.info("Ajout des informations de continent effectué.")
+except Exception as e:
+    logger.error(f"Erreur lors de l'ajout des continents : {e}")
+    st.error("Erreur lors de l'ajout des données continentales.")
+    st.stop()
 
-# Tableau des répondants et emploi en fonction des continents
-df_carto_cont = stack_users_df.groupby(["Continent"])["Employed"].agg(
-    ["count", "mean"]
-)
-df_carto_cont = df_carto_cont.sort_values(by="count", ascending=False).reset_index()
-df_carto_cont["mean"] = (df_carto_cont["mean"] * 100).round(2)
-
-df_carto_cont.columns = ["Continent", "Nombre de répondants", "Taux d'emploi"]
+# Agrégation continentale
+try:
+    df_carto_cont = stack_users_df.groupby(["Continent"])["Employed"].agg(
+        ["count", "mean"]
+    )
+    df_carto_cont = df_carto_cont.sort_values(by="count", ascending=False).reset_index()
+    df_carto_cont["mean"] = (df_carto_cont["mean"] * 100).round(2)
+    df_carto_cont.columns = ["Continent", "Nombre de répondants", "Taux d'emploi"]
+    logger.info("Tableau des continents généré.")
+except Exception as e:
+    logger.error(f"Erreur lors de l'agrégation continentale : {e}")
+    st.error("Erreur lors de la préparation des données par continent.")
+    st.stop()
 
 # Choix du graphe
 tab_nb, tab_taux, tab_cont = st.tabs(
@@ -128,3 +176,5 @@ st.markdown(
     autres régions, et légèrement plus élevé en Afrique.
     """
 )
+
+logger.info("Fin de l'exécution de la page Répartition géographique.")
