@@ -1,4 +1,4 @@
 # data/
 # .env
 # logs
-.venv
+env
