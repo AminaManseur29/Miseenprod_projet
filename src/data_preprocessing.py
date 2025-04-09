@@ -66,7 +66,7 @@ def labels_translation(df):
 # Enrichissement des données
 
 
-def get_iso_country_codes():
+def get_iso_country_codes(url):
     """
     Retrieves ISO country code table from iban.com.
 
@@ -74,7 +74,6 @@ def get_iso_country_codes():
         pd.DataFrame: A DataFrame containing the columns 'Country', 'Alpha-2 code',
                       Alpha-3 code', and 'Numeric code'.
     """
-    url = "https://www.iban.com/country-codes"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
 

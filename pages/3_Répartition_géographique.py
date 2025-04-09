@@ -32,16 +32,20 @@ st.markdown(
     """
 )
 
+STACK_USERS_DATA = "data/StackOverflowSurvey.csv"
+COUNTRIES_LANG = "data/CountryLanguageStats.xls"
+ISO_URL = "https://www.iban.com/country-codes"
+
 # Chargement des données
-stack_users_data = pd.read_csv("data/stackoverflow_full.csv", index_col="Unnamed: 0")
+stack_users_df = pd.read_csv(STACK_USERS_DATA, index_col="Unnamed: 0")
 
 # Ajout d'une colonne Code ISO (nécessaire pour les cartes)
-iso_df = get_iso_country_codes()
-stack_users_data = add_iso_codes(stack_users_data, iso_df)
+iso_df = get_iso_country_codes(ISO_URL)
+stack_users_df = add_iso_codes(stack_users_df, iso_df)
 
 # Tableau nombre de répondants et taux d'emploi par pays
 df_carto = (
-    stack_users_data.groupby(["Country", "ISO"])["Employed"]
+    stack_users_df.groupby(["Country", "ISO"])["Employed"]
     .agg(["count", "mean"])
     .reset_index()
 )
@@ -71,11 +75,10 @@ fig_taux = plot_choropleth_map(
 )
 
 # 3. Tableau nombre de répondants et taux d'emploi par continent
-
-stack_users_data = add_continent_info(stack_users_data, "data/Countries_Languages.xls")
+stack_users_df = add_continent_info(stack_users_df, COUNTRIES_LANG)
 
 # Tableau des répondants et emploi en fonction des continents
-df_carto_cont = stack_users_data.groupby(["Continent"])["Employed"].agg(
+df_carto_cont = stack_users_df.groupby(["Continent"])["Employed"].agg(
     ["count", "mean"]
 )
 df_carto_cont = df_carto_cont.sort_values(by="count", ascending=False).reset_index()

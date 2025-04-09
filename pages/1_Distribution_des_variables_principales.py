@@ -33,21 +33,23 @@ st.markdown(
     """
 )
 
+STACK_USERS_DATA = "data/StackOverflowSurvey.csv"
+
 # Chargement des données
-stack_users_data = pd.read_csv("data/stackoverflow_full.csv", index_col="Unnamed: 0")
+stack_users_df = pd.read_csv(STACK_USERS_DATA, index_col="Unnamed: 0")
 
 # Recodage des variables catégorielles (ENG -> FR)
-stack_users_data_fr = labels_translation(stack_users_data)
+stack_users_df_fr = labels_translation(stack_users_df)
 
 # 1. Graphe Age
-fig_age = plot_hist(stack_users_data_fr, "Age", "Distribution de l'âge")
+fig_age = plot_hist(stack_users_df_fr, "Age", "Distribution de l'âge")
 
 # 2. Graphe Genre
-fig_genre = plot_hist(stack_users_data_fr, "Gender", "Distribution du genre")
+fig_genre = plot_hist(stack_users_df_fr, "Gender", "Distribution du genre")
 
 # 3. Graphe Niveau d'éducation
 fig_ed = plot_hist_orders(
-    stack_users_data_fr,
+    stack_users_df_fr,
     "EdLevel",
     "Distribution du niveau d'éducation",
     {
@@ -63,27 +65,27 @@ fig_ed = plot_hist_orders(
 
 # 4. Graphe Branche pro
 fig_branch = plot_hist(
-    stack_users_data_fr, "MainBranch", "Distribution de la branche professionnelle"
+    stack_users_df_fr, "MainBranch", "Distribution de la branche professionnelle"
 )
 
 # 5. Graphe Années de code
 fig_code = plot_hist(
-    stack_users_data_fr, "YearsCode", "Distribution des années de code"
+    stack_users_df_fr, "YearsCode", "Distribution des années de code"
 )
 
 # 6. Graphe Années de code pro
 fig_codepro = plot_hist(
-    stack_users_data_fr, "YearsCodePro", "Distribution des années de code professionnel"
+    stack_users_df_fr, "YearsCodePro", "Distribution des années de code professionnel"
 )
 
 # 7. Graphe Salaire précédent
 fig_salaire = plot_hist(
-    stack_users_data_fr, "PreviousSalary", "Distribution du salaire précédent"
+    stack_users_df_fr, "PreviousSalary", "Distribution du salaire précédent"
 )
 
 # 8. Graphe Compétences en informatique
 fig_info = plot_hist(
-    stack_users_data_fr,
+    stack_users_df_fr,
     "ComputerSkills",
     "Distribution des compétences en informatique",
 )

@@ -25,14 +25,16 @@ st.markdown(
     """
 )
 
+STACK_USERS_DATA = "data/StackOverflowSurvey.csv"
+
 # Chargement des données
-stack_users_data = pd.read_csv("data/stackoverflow_full.csv", index_col="Unnamed: 0")
+stack_users_df = pd.read_csv(STACK_USERS_DATA, index_col="Unnamed: 0")
 
 # Recodage des variables catégorielles (ENG -> FR)
-stack_users_data_fr = labels_translation(stack_users_data)
+stack_users_df_fr = labels_translation(stack_users_df)
 
 # Graphe Emploi
-fig = plot_hist(stack_users_data_fr, "EmployedCat", "Distribution du statut d'emploi")
+fig = plot_hist(stack_users_df_fr, "EmployedCat", "Distribution du statut d'emploi")
 
 st.plotly_chart(fig)
 
