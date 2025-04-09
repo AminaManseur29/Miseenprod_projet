@@ -2,8 +2,10 @@
 Ce module génère la répartition géographique des répondants
 """
 
+import os
 import streamlit as st
 import pandas as pd
+from dotenv import load_dotenv
 
 from src.data_preprocessing import (
     get_iso_country_codes,
@@ -11,6 +13,14 @@ from src.data_preprocessing import (
     add_continent_info,
 )
 from src.plot_utils import plot_choropleth_map
+
+load_dotenv()
+
+stack_users_data_path = os.environ.get("stack_users_data_path", "data/StackOverflowSurvey.csv")
+countries_lang_data_path = os.environ.get(
+    "countries_lang_data_path", "data/CountryLanguageStats.xls"
+    )
+iso_url = os.environ.get("iso_url", "https://www.iban.com/country-codes")
 
 st.set_page_config(
     page_title="Répartition géographique", page_icon=":chart_with_upwards_trend:"
@@ -32,15 +42,11 @@ st.markdown(
     """
 )
 
-STACK_USERS_DATA = "data/StackOverflowSurvey.csv"
-COUNTRIES_LANG = "data/CountryLanguageStats.xls"
-ISO_URL = "https://www.iban.com/country-codes"
-
 # Chargement des données
-stack_users_df = pd.read_csv(STACK_USERS_DATA, index_col="Unnamed: 0")
+stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
 
 # Ajout d'une colonne Code ISO (nécessaire pour les cartes)
-iso_df = get_iso_country_codes(ISO_URL)
+iso_df = get_iso_country_codes(iso_url)
 stack_users_df = add_iso_codes(stack_users_df, iso_df)
 
 # Tableau nombre de répondants et taux d'emploi par pays
@@ -75,7 +81,7 @@ fig_taux = plot_choropleth_map(
 )
 
 # 3. Tableau nombre de répondants et taux d'emploi par continent
-stack_users_df = add_continent_info(stack_users_df, COUNTRIES_LANG)
+stack_users_df = add_continent_info(stack_users_df, countries_lang_data_path)
 
 # Tableau des répondants et emploi en fonction des continents
 df_carto_cont = stack_users_df.groupby(["Continent"])["Employed"].agg(

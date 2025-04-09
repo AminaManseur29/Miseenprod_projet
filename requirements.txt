@@ -4,3 +4,4 @@ statsmodels
 wordcloud
 xgboost
 xlrd
+streamlit

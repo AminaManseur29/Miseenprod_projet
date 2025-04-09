@@ -26,3 +26,8 @@ Par ailleurs, une application développée via Streamlit présente la distributi
 Le projet a été réalisé par le groupe de 3 suivant : Pierre CLAYTON, Clément DE LARDEMELLE, Louise LIGONNIERE.
 
 
+# Créer un fichier .env
+Créer un fichier .env qui contient les chemins vers les bases de données stockées dans un environnement cloud (comme le SSPCloud):
+- stack_users_data_path
+- countries_lang_data_path
+- iso_url

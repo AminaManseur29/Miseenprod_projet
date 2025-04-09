@@ -2,11 +2,17 @@
 Ce module génère le taux d'emploi
 """
 
+import os
 import streamlit as st
 import pandas as pd
+from dotenv import load_dotenv
 
 from src.data_preprocessing import labels_translation
 from src.plot_utils import plot_hist
+
+load_dotenv()
+
+stack_users_data_path = os.environ.get("stack_users_data_path", "data/StackOverflowSurvey.csv")
 
 st.set_page_config(
     page_title="Taux d'emploi global", page_icon=":chart_with_upwards_trend:"
@@ -25,10 +31,8 @@ st.markdown(
     """
 )
 
-STACK_USERS_DATA = "data/StackOverflowSurvey.csv"
-
-# Chargement des données
-stack_users_df = pd.read_csv(STACK_USERS_DATA, index_col="Unnamed: 0")
+# Chargement des données depuis le répertoire sspcloud
+stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
 
 # Recodage des variables catégorielles (ENG -> FR)
 stack_users_df_fr = labels_translation(stack_users_df)
