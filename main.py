@@ -1,7 +1,6 @@
-# Page d'accueil de l'application
+""" Page d'accueil de l'application"""
 
 import streamlit as st
-import pandas as pd
 
 st.set_page_config(
     page_title="Accueil", 
