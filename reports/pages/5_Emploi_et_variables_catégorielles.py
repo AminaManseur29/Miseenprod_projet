@@ -1,12 +1,36 @@
 """Ce module génère la page de rapport sur les emplois et variables catégorielles."""
 
-
+import os
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+from dotenv import load_dotenv
+from loguru import logger
 
-from src.data_preprocessing import labels_translation 
 
+from src.plot_utils import (
+    plot_bar_orders,
+)
+from src.data_preprocessing import group_percentage_by, labels_translation
+
+
+# Initialisation du logger
+logger.add(
+    "logs/emplois_vars_cat.log",
+    rotation="1 MB",
+    retention="10 days",
+    level="DEBUG",
+)
+logger.info("Début de la page Streamlit : Emplois et variables catégorielles")
+
+
+# Chargement des variables d'environnement
+load_dotenv()
+stack_users_data_path = os.environ.get(
+    "stack_users_data_path", "data/StackOverflowSurvey.csv"
+)
+logger.debug(f"Chemin du fichier StackOverflow récupéré : {stack_users_data_path}")
+
+# Configuration de la page
 st.set_page_config(
     page_title="Emploi et variables catégorielles",
     page_icon=":chart_with_upwards_trend:",
@@ -28,102 +52,71 @@ st.markdown(
     """
 )
 
-data_slack = pd.read_csv("data/stackoverflow_full.csv", index_col="Unnamed: 0")
-data_slack = labels_translation(data_slack)
+# Chargement des données depuis le répertoire sspcloud
+try:
+    stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
+    logger.success(f"Fichier chargé avec succès : {stack_users_data_path}")
+except Exception as e:
+    logger.error(f"Erreur lors du chargement du fichier : {e}")
+    st.error(
+        "Impossible de charger les données. Veuillez vérifier le chemin ou le format du fichier."
+    )
+    st.stop()
+
+# Traduction des labels
+try:
+    stack_users_df_fr = labels_translation(stack_users_df)
+    logger.info("Traduction des labels effectuée avec succès")
+except Exception as e:
+    logger.error(f"Erreur lors de la traduction des labels : {e}")
+    st.error("Erreur lors du traitement des données.")
+    st.stop()
+
+
+# Calcul des pourcentages pour les différentes colonnes
+try:
+    age_df = group_percentage_by(stack_users_df_fr, ["Age", "EmployedCat"])
+    gender_df = group_percentage_by(stack_users_df_fr, ["Gender", "EmployedCat"])
+    edLevel_df = group_percentage_by(stack_users_df_fr, ["EdLevel", "EmployedCat"])
+    workbranch_df = group_percentage_by(
+        stack_users_df_fr, ["MainBranch", "EmployedCat"]
+    )
+    logger.info("Génération des données agrégées effectuée avec succès")
+except Exception as e:
+    logger.error(f"Erreur lors de l'agrégation' : {e}")
+    st.error("Erreur lors du traitement des données.")
+    st.stop()
+
+# Génération des graphiques
+logger.info("Début de la génération des graphiques")
 
 # 1. Graphe Age
-# DF des Pourcentages Age
-grouped_df_age = (
-    df_fr.groupby(["Age", "EmployedCat"], observed=True)
-    .size()
-    .reset_index(name="count")
+fig_age = plot_bar_orders(
+    age_df,
+    "Age",
+    "EmployedCat",
+    "Distribution du statut d'emploi selon l'âge",
+    {"Age": ["Moins de 35 ans", "Plus de 35 ans"]},
+    x_col="percentage",
 )
-total_counts = df_fr.groupby("Age").size()
-
-grouped_df_age["percentage"] = (
-    grouped_df_age["count"] / grouped_df_age["Age"].map(total_counts) * 100
-).round(1)
-
-# Graphe Pourcentages Age
-fig_age = px.bar(
-    grouped_df_age,
-    orientation="h",
-    x="percentage",
-    y="Age",
-    color="EmployedCat",
-    text_auto=True,
-    category_orders={"Age": ["Moins de 35 ans", "Plus de 35 ans"]},
-    color_discrete_sequence=px.colors.qualitative.Pastel,
-)
-
-fig_age.update_layout(
-    title_text="Distribution du statut d'emploi selon l'âge",
-    xaxis_title_text="Pourcentage",
-    yaxis_title_text="Age",
-    legend_title_text="Statut d'emploi",
-    bargap=0.2,
-    bargroupgap=0.1,
-)
-
-fig_age.update_traces(texttemplate="%{x}%")
 
 # 2. Graphe Genre
-# DF des Pourcentages Genre
-grouped_df_genre = (
-    df_fr.groupby(["Gender", "EmployedCat"], observed=True)
-    .size()
-    .reset_index(name="count")
-)
-total_counts = df_fr.groupby("Gender").size()
-
-grouped_df_genre["percentage"] = (
-    grouped_df_genre["count"] / grouped_df_genre["Gender"].map(total_counts) * 100
-).round(1)
-
-# Graphe Pourcentages Genre
-fig_genre = px.bar(
-    grouped_df_genre,
-    orientation="h",
-    x="percentage",
-    y="Gender",
-    color="EmployedCat",
-    text_auto=True,
-    category_orders={"Gender": ["Homme", "Femme", "Non-Binaire"]},
-    color_discrete_sequence=px.colors.qualitative.Pastel,
+fig_gender = plot_bar_orders(
+    gender_df,
+    "Gender",
+    "EmployedCat",
+    "Distribution du statut d'emploi selon le genre",
+    {"Gender": ["Homme", "Femme", "Non-Binaire"]},
+    x_col="percentage",
 )
 
-fig_genre.update_layout(
-    title_text="Distribution du statut d'emploi selon le genre",
-    xaxis_title_text="Pourcentage",
-    yaxis_title_text="Genre",
-    legend_title_text="Statut d'emploi",
-    bargap=0.2,
-    bargroupgap=0.1,
-)
-
-fig_genre.update_traces(texttemplate="%{x}%")
 
 # 3. Graphe Niveau d'éducation
-# DF des Pourcentages Niveau d'éd
-grouped_df_ed = (
-    df_fr.groupby(["EdLevel", "EmployedCat"], observed=True)
-    .size()
-    .reset_index(name="count")
-)
-total_counts = df_fr.groupby("EdLevel").size()
-
-grouped_df_ed["percentage"] = (
-    grouped_df_ed["count"] / grouped_df_ed["EdLevel"].map(total_counts) * 100
-).round(1)
-
-# Graphe Pourcentages Niveau d'éd
-fig_ed = px.bar(
-    grouped_df_ed,
-    orientation="h",
-    x="percentage",
-    y="EdLevel",
-    color="EmployedCat",
-    text_auto=True,
+fig_edLevel = plot_bar_orders(
+    edLevel_df,
+    "EdLevel",
+    "EmployedCat",
+    "Distribution du statut d'emploi selon le niveau d'éducation",
     category_orders={
         "EdLevel": [
             "Pas d'éducation supérieure",
@@ -133,55 +126,20 @@ fig_ed = px.bar(
             "Autre",
         ]
     },
-    color_discrete_sequence=px.colors.qualitative.Pastel,
+    x_col="percentage",
 )
 
-fig_ed.update_layout(
-    title_text="Distribution du statut d'emploi selon le niveau d'éducation",
-    xaxis_title_text="Pourcentage",
-    yaxis_title_text="Niveau d'éducation",
-    legend_title_text="Statut d'emploi",
-    bargap=0.2,
-    bargroupgap=0.1,
-)
-
-fig_ed.update_traces(texttemplate="%{x}%")
 
 # 4. Graphe Branche pro
-# DF des Pourcentages Branche pro
-grouped_df_branch = (
-    df_fr.groupby(["MainBranch", "EmployedCat"], observed=True)
-    .size()
-    .reset_index(name="count")
-)
-total_counts = df_fr.groupby("MainBranch").size()
-
-grouped_df_branch["percentage"] = (
-    grouped_df_branch["count"] / grouped_df_branch["MainBranch"].map(total_counts) * 100
-).round(1)
-
-# Graphe Pourcentages Branche pro
-fig_branch = px.bar(
-    grouped_df_branch,
-    orientation="h",
-    x="percentage",
-    y="MainBranch",
-    color="EmployedCat",
-    text_auto=True,
-    category_orders={"MainBranch": ["Développement", "Autre"]},
-    color_discrete_sequence=px.colors.qualitative.Pastel,
+fig_workbranch = plot_bar_orders(
+    workbranch_df,
+    "MainBranch",
+    "EmployedCat",
+    "Distribution du statut d'emploi selon la branche professionnelle",
+    {"MainBranch": ["Développement", "Autre"]},
+    x_col="percentage",
 )
 
-fig_branch.update_layout(
-    title_text="Distribution du statut d'emploi selon la branche professionnelle",
-    xaxis_title_text="Pourcentage",
-    yaxis_title_text="Branche professionnelle principale",
-    legend_title_text="Statut d'emploi",
-    bargap=0.2,
-    bargroupgap=0.1,
-)
-
-fig_branch.update_traces(texttemplate="%{x}%")
 
 # Choix du graphe
 tab_age, tab_genre, tab_ed, tab_branch = st.tabs(
@@ -191,11 +149,11 @@ tab_age, tab_genre, tab_ed, tab_branch = st.tabs(
 with tab_age:
     st.plotly_chart(fig_age)
 with tab_genre:
-    st.plotly_chart(fig_genre)
+    st.plotly_chart(fig_gender)
 with tab_ed:
-    st.plotly_chart(fig_ed)
+    st.plotly_chart(fig_edLevel)
 with tab_branch:
-    st.plotly_chart(fig_branch)
+    st.plotly_chart(fig_workbranch)
 
 st.markdown(
     """
@@ -226,3 +184,5 @@ st.markdown(
     le niveau d'éducation).
     """
 )
+
+logger.info("Fin de l'exécution de la page Emplois et variables catégorielles")

@@ -1,11 +1,35 @@
 """Ce module génère la page de rapport sur les emplois et variables numériques."""
 
-from collections import Counter
+
+import os
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+from dotenv import load_dotenv
+from loguru import logger
 
+from src.data_preprocessing import (
+    compute_top_languages_count,
+    categorize_employment_status,
+)
+from src.plot_utils import plot_box, make_wordcloud
 
+# Initialisation du logger
+logger.add(
+    "logs/emplois_vars_num.log",
+    rotation="1 MB",
+    retention="10 days",
+    level="DEBUG",
+)
+logger.info("Début de la page Streamlit : Emplois et variables numériques")
+
+# Chargement des variables d'environnement
+load_dotenv()
+stack_users_data_path = os.environ.get(
+    "stack_users_data_path", "data/StackOverflowSurvey.csv"
+)
+logger.debug(f"Chemin du fichier StackOverflow récupéré : {stack_users_data_path}")
+
+# Configuration de la page
 st.set_page_config(
     page_title="Emploi et variables numériques", page_icon=":chart_with_upwards_trend:"
 )
@@ -25,129 +49,102 @@ st.markdown(
     """
 )
 
-# Chargement des données
-df = pd.read_csv("stackoverflow_full.csv", index_col="Unnamed: 0")
+# Chargement des données depuis le répertoire sspcloud
+try:
+    stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
+    stack_users_df = categorize_employment_status(
+        stack_users_df
+    )  # pour binariser les colonnes d'emploi
+    logger.success(f"Fichier chargé avec succès : {stack_users_data_path}")
+except Exception as e:
+    logger.error(f"Erreur lors du chargement du fichier : {e}")
+    st.error(
+        "Impossible de charger les données. Veuillez vérifier le chemin ou le format du fichier."
+    )
+    st.stop()
 
-# Recodage des variables catégorielles (ENG -> FR)
-df_fr = df.copy()
+# Dataframe réduit des 10 langages les plus maîtrisés parmi les 20 plus utilisés
+try:
+    fig_lang_cloud, lang_count = make_wordcloud(stack_users_df, "HaveWorkedWith")
+    count_lang20 = lang_count.most_common(20)
+    top_languages = count_lang20.most_common(10)
+    top_languages = pd.DataFrame(
+        top_languages, columns=["Langage", "Nombre d'occurences"], index=range(1, 11)
+    )
+    top_lang_alter = compute_top_languages_count(
+        stack_users_df, "HaveWorkedWith", top_languages
+    )
+    logger.info(
+        "Dataframe des 10 langages mieux maîtrisés parmi les 20 plus fréquents calculé avec succès"
+    )
+except Exception as e:
+    logger.error(f"Erreur lors de la création du Dataframe : {e}")
+    st.error("Erreur lors du traitement des données.")
+    st.stop()
 
-df_fr["EmployedCat"] = pd.cut(
-    df_fr["Employed"], bins=[-1, 0, 1], labels=["Sans emploi", "En emploi"]
-).astype("object")
+
+# Génération des graphiques
+logger.info("Début de la génération des box plots")
 
 # 1. Années de code vs. statut d'emploi
-fig_code = px.box(
-    df_fr,
-    x="EmployedCat",
-    y="YearsCode",
-    color="EmployedCat",
-    color_discrete_sequence=["rgb(246, 207, 113)", "rgb(102, 197, 204)"],
-)
-
-fig_code.update_layout(
-    title_text="Distribution des années de code selon le statut d'emploi",
-    xaxis_title_text="Statut d'emploi",
+fig_code = plot_box(
+    data=stack_users_df,
+    x_col="EmployedCat",
+    y_col="YearsCode",
+    color_col="EmployedCat",
+    title="Distribution des années de code selon le statut d'emploi",
+    xaxis_title="Statut d'emploi",
     yaxis_title_text="Années de code",
-    legend_title_text="Statut d'emploi",
-    bargap=0.2,
-    bargroupgap=0.1,
 )
 
 # 2. Années de code pro vs. statut d'emploi
-fig_codepro = px.box(
-    df_fr,
-    x="EmployedCat",
-    y="YearsCodePro",
-    color="EmployedCat",
-    color_discrete_sequence=["rgb(246, 207, 113)", "rgb(102, 197, 204)"],
-)
-
-fig_codepro.update_layout(
-    title_text="Distribution des années de code professionnel selon le statut d'emploi",
-    xaxis_title_text="Statut d'emploi",
+fig_codepro = plot_box(
+    data=stack_users_df,
+    x_col="EmployedCat",
+    y_col="YearsCodePro",
+    color_col="EmployedCat",
+    title="Distribution des années de code professionnel selon le statut d'emploi",
+    xaxis_title="Statut d'emploi",
     yaxis_title_text="Années de code professionnel",
-    legend_title_text="Statut d'emploi",
-    bargap=0.2,
-    bargroupgap=0.1,
 )
 
 # 3. Salaire précédent vs. statut d'emploi
-fig_salaire = px.box(
-    df_fr,
-    x="EmployedCat",
-    y="PreviousSalary",
-    color="EmployedCat",
-    color_discrete_sequence=["rgb(246, 207, 113)", "rgb(102, 197, 204)"],
-)
-
-fig_salaire.update_layout(
-    title_text="Distribution du salaire précédent selon le statut d'emploi",
-    xaxis_title_text="Statut d'emploi",
-    yaxis_title_text="Salaire précédent",
-    legend_title_text="Statut d'emploi",
-    bargap=0.2,
-    bargroupgap=0.1,
+fig_salaire = plot_box(
+    data=stack_users_df,
+    x_col="EmployedCat",
+    y_col="PreviousSalary",
+    color_col="EmployedCat",
+    title="Distribution du salaire précédent selon le statut d'emploi",
+    xaxis_title="Statut d'emploi",
+    yaxis_title="Salaire précédent",
 )
 
 # 4. Compétences en informatique vs. statut d'emploi
-fig_info = px.box(
-    df_fr,
-    x="EmployedCat",
-    y="ComputerSkills",
-    color="EmployedCat",
-    color_discrete_sequence=["rgb(246, 207, 113)", "rgb(102, 197, 204)"],
-)
-
-fig_info.update_layout(
-    title_text=(
-    "Distribution des compétences en informatique "
-    "(nombre de langages maîtrisés) selon le statut d'emploi"
+fig_comp_info = plot_box(
+    data=stack_users_df,
+    x_col="EmployedCat",
+    y_col="ComputerSkills",
+    color_col="EmployedCat",
+    title=(
+        "Distribution des compétences en informatique "
+        "(nombre de langages maîtrisés) selon le statut d'emploi"
     ),
-    xaxis_title_text="Statut d'emploi",
-    yaxis_title_text="Nombre de langages maîtrisés",
-    legend_title_text="Statut d'emploi",
-    bargap=0.2,
-    bargroupgap=0.1,
+    xaxis_title="Statut d'emploi",
+    yaxis_title="Nombre de langages maîtrisés",
 )
 
 # 5. Compétences en informatique - mesure alternative vs. statut d'emploi
-# Liste des 10 langages les plus employés
-languages = [str(cat).split(";") for cat in df_fr["HaveWorkedWith"]]
-languages_all = [item for sublist in languages for item in sublist]
-top_languages = pd.DataFrame(
-    Counter(languages_all).most_common(10),
-    columns=["Langage", "Nombre d'occurences"],
-    index=range(1, 11),
-)
-
-# Ajout d'une colonne qui compte le nombre de langages
-# maîtrisés parmi les 10 plus courants
-df_fr["LanguagesList"] = df_fr["HaveWorkedWith"].apply(
-    lambda x: [] if pd.isna(x) else x.split(";")
-)
-df_fr["TopLanguagesCount"] = df_fr["LanguagesList"].apply(
-    lambda langlist: sum(lang in list(top_languages["Langage"]) for lang in langlist)
-)
-
-# Graphe
-fig_info2 = px.box(
-    df_fr,
-    x="EmployedCat",
-    y="TopLanguagesCount",
-    color="EmployedCat",
-    color_discrete_sequence=["rgb(246, 207, 113)", "rgb(102, 197, 204)"],
-)
-
-fig_info2.update_layout(
-    title_text=(
-    "Distribution des compétences en informatique"
-    "(mesure alternative) selon le statut d'emploi"
+fig_comp_info_alter = plot_box(
+    data=top_lang_alter,
+    x_col="EmployedCat",
+    y_col="TopLanguagesCount",
+    color_col="EmployedCat",
+    title=(
+        "Distribution des compétences en informatique"
+        "(mesure alternative) selon le statut d'emploi"
     ),
-    xaxis_title_text="Statut d'emploi",
-    yaxis_title_text="Nombre de langages maîtrisés parmi les 10 langages les plus présents",
-    legend_title_text="Statut d'emploi",
-    bargap=0.2,
-    bargroupgap=0.1,
+    xaxis_title="Statut d'emploi",
+    yaxis_title="Nombre de langages maîtrisés parmi les 10 langages les plus présents",
 )
 
 # Choix du graphe
@@ -168,9 +165,9 @@ with tab_codepro:
 with tab_salaire:
     st.plotly_chart(fig_salaire)
 with tab_info:
-    st.plotly_chart(fig_info)
+    st.plotly_chart(fig_comp_info)
 with tab_info2:
-    st.plotly_chart(fig_info2)
+    st.plotly_chart(fig_comp_info_alter)
 
 st.markdown(
     """
@@ -190,3 +187,5 @@ st.markdown(
     aussi significativement moins employés.
     """
 )
+
+logger.info("Fin de l'exécution de la page Emplois et variables numériques")
