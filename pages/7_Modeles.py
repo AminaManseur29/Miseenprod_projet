@@ -6,8 +6,8 @@ import dalex as dx
 import pandas as pd
 import streamlit as st
 import joblib
-from src.models_utils import get_data_linear_regression, get_data_log_regression
-from src.models_utils import get_fairness_check, get_fairness_check_after_mitigation
+from src.models_visualisation_utils import get_data_linear_regression, get_data_log_regression
+from src.models_visualisation_utils import get_fairness_test, get_fairness_check, get_fairness_check_after_mitigation
 
 # ==========================
 # User interface
@@ -37,14 +37,29 @@ with st.sidebar:
 # Set up data
 # ==========================
 
-FILE_PATH = "stackoverflow_full.csv"
+# Est-ce que c'est vraiment nécessaire de charger les données ici ? 
+# Possible de passer tout ce qui est calcul dans des fonctions src?
+"""
+# Chargement des variables d'environnement
+load_dotenv()
+stack_users_data_path = os.environ.get(
+    "stack_users_data_path", "data/StackOverflowSurvey.csv"
+)
+logger.debug(f"Chemin du fichier StackOverflow récupéré : {stack_users_data_path}")
 
-stack_users_data = pd.read_csv(FILE_PATH)
 
-stack_users_data = stack_users_data.drop(columns=["Unnamed: 0"])
-stack_users_data = stack_users_data.drop(columns="HaveWorkedWith")
+# Chargement des données depuis le répertoire sspcloud
+try:
+    stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
+    logger.success(f"Fichier chargé avec succès : {stack_users_data_path}")
+except Exception as e:
+    logger.error(f"Erreur lors du chargement du fichier : {e}")
+    st.error(
+        "Impossible de charger les données. Veuillez vérifier le chemin ou le format du fichier."
+    )
+    st.stop()
 
-X = stack_users_data[
+X = stack_users_df[
     [
         "Age",
         "Accessibility",
@@ -59,8 +74,8 @@ X = stack_users_data[
     ]
 ]
 
-y = stack_users_data["Employed"]
-
+y = stack_users_df["Employed"]
+"""
 VAL_COLS = ["PreviousSalary", "YearsCode", "YearsCodePro", "ComputerSkills"]
 
 TO_DUMMIES = ["Age", "EdLevel", "Gender", "MentalHealth", "MainBranch"]
@@ -68,7 +83,7 @@ TO_DUMMIES = ["Age", "EdLevel", "Gender", "MentalHealth", "MainBranch"]
 # ==========================
 # Set up baseline models from dumps
 # ==========================
-
+"""
 exp1 = dx.Explainer(
     joblib.load("output/models/decision_tree_baseline.joblib"), X, y
     )
@@ -81,6 +96,7 @@ exp3 = dx.Explainer(
 exp4 = dx.Explainer(
     joblib.load("output/models/xgboost_baseline.joblib"), X, y
 )
+"""
 
 # ==========================
 # Linear Regression
@@ -116,19 +132,28 @@ tab_logistic_regression.table(result_df)
 # Fairness test
 # ==========================
 
+###
+# Passer en fonction de façon à ce qu'on n'ait pas à charger les modèles sur cette page 
+# (dans un script src plutôt comme pour get_data_..._regression ?)
+
 tab_fairness_test.header("Modèles baseline:")
 
 tab_fairness_test.subheader("Decision Tree performance")
-tab_fairness_test.table(exp1.model_performance().result)
+result_df_exp1 = get_fairness_test(exp1)
+tab_fairness_test.table(result_df_exp1)
 
 tab_fairness_test.subheader("Random Forest performance")
-tab_fairness_test.table(exp2.model_performance().result)
+result_df_exp2 = get_fairness_test(exp2)
+tab_fairness_test.table(result_df_exp2)
 
 tab_fairness_test.subheader("Logistic Regression performance")
-tab_fairness_test.table(exp3.model_performance().result)
+result_df_exp3 = get_fairness_test(exp3)
+tab_fairness_test.table(result_df_exp3)
 
 tab_fairness_test.subheader("Gradient Boosting performance")
-tab_fairness_test.table(exp4.model_performance().result)
+result_df_exp4 = get_fairness_test(exp4)
+tab_fairness_test.table(result_df_exp4)
+###
 
 tab_fairness_test.header("Test d'équité")
 
@@ -139,7 +164,8 @@ criteria_selector_3 = tab_fairness_test.selectbox(
 
 criteria_selector_4 = tab_fairness_test.selectbox(
     'Quelle catégorie considérer comme "privileged" ?',
-    set(stack_users_data[criteria_selector_3]),
+    set(stack_users_df[criteria_selector_3]), 
+    # ici il faudra enlever le recours au df, par ex via un dict qui donne les catégories pour chq var possible de selector_3
 )
 
 plot = get_fairness_check(criteria_selector_3, criteria_selector_4)

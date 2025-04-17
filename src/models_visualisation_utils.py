@@ -13,12 +13,25 @@ import pandas as pd
 # Set up data
 # ==========================
 
+# Chargement des variables d'environnement
+load_dotenv()
+stack_users_data_path = os.environ.get(
+    "stack_users_data_path", "data/StackOverflowSurvey.csv"
+)
+logger.debug(f"Chemin du fichier StackOverflow récupéré : {stack_users_data_path}")
+
+
+# Chargement des données depuis le répertoire sspcloud
+try:
+    stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
+    logger.success(f"Fichier chargé avec succès : {stack_users_data_path}")
+except Exception as e:
+    logger.error(f"Erreur lors du chargement du fichier : {e}")
+    st.error(
+        "Impossible de charger les données. Veuillez vérifier le chemin ou le format du fichier."
+    )
+    st.stop()
 FILE_PATH = "stackoverflow_full.csv"
-
-stack_users_data = pd.read_csv(FILE_PATH)
-
-stack_users_data = stack_users_data.drop(columns=["Unnamed: 0"])
-stack_users_data = stack_users_data.drop(columns="HaveWorkedWith")
 
 X = stack_users_data[
     [
@@ -126,6 +139,8 @@ def get_data_log_regression(parameters):
     )
     return results, reg.score(X, stack_users_data["Employed"]), X, delta_p
 
+def get_fairness_test(model):
+    return model.model_performance().result
 
 def get_fairness_check(criteria, privileged):
     protected = stack_users_data[criteria]
