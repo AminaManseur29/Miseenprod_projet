@@ -19,10 +19,10 @@ st.set_page_config(
 )
 
 with st.sidebar:
-    st.title("Projet Python pour la Data Science")
-    st.subheader("Pierre CLAYTON")
-    st.subheader("Clément DE LARDEMELLE")
+    st.title("Projet Mise en production pour la data-science")
     st.subheader("Louise LIGONNIERE")
+    st.subheader("Amina MANSEUR")
+    st.subheader("Lila MEKKI")
 
 st.markdown(
     """
