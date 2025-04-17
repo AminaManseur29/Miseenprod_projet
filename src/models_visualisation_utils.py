@@ -1,13 +1,13 @@
-
 """
 Ce module contient les fonctions nécessaires à la présentation des modèles.
 """
 
+import os
 import dalex as dx
 import joblib
-from sklearn.linear_model import LinearRegression, LogisticRegression
 import pandas as pd
-
+from dotenv import load_dotenv
+from sklearn.linear_model import LogisticRegression
 
 # ==========================
 # Set up data
@@ -18,22 +18,18 @@ load_dotenv()
 stack_users_data_path = os.environ.get(
     "stack_users_data_path", "data/StackOverflowSurvey.csv"
 )
-logger.debug(f"Chemin du fichier StackOverflow récupéré : {stack_users_data_path}")
-
 
 # Chargement des données depuis le répertoire sspcloud
-try:
-    stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
-    logger.success(f"Fichier chargé avec succès : {stack_users_data_path}")
-except Exception as e:
-    logger.error(f"Erreur lors du chargement du fichier : {e}")
-    st.error(
-        "Impossible de charger les données. Veuillez vérifier le chemin ou le format du fichier."
-    )
-    st.stop()
-FILE_PATH = "stackoverflow_full.csv"
+stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
 
-X = stack_users_data[
+VAR_NUM = ["PreviousSalary", "YearsCode", "YearsCodePro", "ComputerSkills"]
+VAR_CAT = ["Age", "EdLevel", "Gender", "MentalHealth", "MainBranch"]
+
+# ==========================
+# Set up models (baseline + mitigated) from dumps
+# ==========================
+
+X_model = stack_users_df[
     [
         "Age",
         "Accessibility",
@@ -48,87 +44,71 @@ X = stack_users_data[
     ]
 ]
 
-y = stack_users_data["Employed"]
+y_model = stack_users_df["Employed"]
 
-VAL_COLS = ["PreviousSalary", "YearsCode", "YearsCodePro", "ComputerSkills"]
-
-TO_DUMMIES = ["Age", "EdLevel", "Gender", "MentalHealth", "MainBranch"]
-
-
-# ==========================
-# Set up models (baseline + mitigated) from dumps
-# ==========================
-
-exp1 = dx.Explainer(
-    joblib.load("output/models/decision_tree_baseline.joblib"), X, y
-)
-exp1_m = dx.Explainer(
-    joblib.load("output/models/decision_tree.joblib"), X, y
-)
-exp2 = dx.Explainer(
-    joblib.load("output/models/random_forest_baseline.joblib"), X, y
-)
-exp2_m = dx.Explainer(
-    joblib.load("output/models/test_forest.joblib"), X, y
-)
+exp2 = dx.Explainer(joblib.load("output/models/random_forest_baseline.joblib"), X_model, y_model)
+exp2_m = dx.Explainer(joblib.load("output/models/random_forest_weighted.joblib"), X_model, y_model)
 exp3 = dx.Explainer(
-    joblib.load("output/models/logistic_regression_baseline.joblib"), X, y
+    joblib.load("output/models/logistic_regression_baseline.joblib"), X_model, y_model
 )
 exp3_m = dx.Explainer(
-    joblib.load("output/models/test_lr.joblib"), X, y
+    joblib.load("output/models/logistic_regression_weighted.joblib"), X_model, y_model
 )
-exp4 = dx.Explainer(
-    joblib.load("output/models/xgboost_baseline.joblib"), X, y
-)
-exp4_m = dx.Explainer(
-    joblib.load("output/models/test_xgb.joblib"), X, y
-)
-
+exp4 = dx.Explainer(joblib.load("output/models/xgboost_baseline.joblib"), X_model, y_model)
+exp4_m = dx.Explainer(joblib.load("output/models/xgboost_weighted.joblib"), X_model, y_model)
 
 # ==========================
 # Utils function
 # ==========================
 
-def get_data_linear_regression(parameters, difference):
-    val_cols = list(set(VAL_COLS).intersection(parameters).difference(difference))
-    to_dummies = list(set(TO_DUMMIES).intersection(parameters).difference(difference))
-    if len(to_dummies) > 0:
-        X = pd.get_dummies(stack_users_data[to_dummies], drop_first=True, dtype=int)
-    else:
-        X = pd.DataFrame()
-    X[val_cols] = stack_users_data[val_cols]
-    reg = LinearRegression().fit(X, stack_users_data[difference])
-
-    results = pd.DataFrame({"Variables": reg.feature_names_in_, "Coeff.": reg.coef_})
-    return results, reg.score(X, stack_users_data[difference])
-
 
 def get_data_log_regression(parameters):
-    val_cols = list(set(VAL_COLS).intersection(parameters))
-    to_dummies = list(set(TO_DUMMIES).intersection(parameters))
+    """
+    Entraîne une régression logistique sur les variables données et mesure leur effet marginal
+    sur la probabilité d'être employé.
+
+    Paramètres
+    ----------
+    parameters : list of str
+        Noms des variables à inclure (numériques et/ou catégorielles).
+
+    Retourne
+    --------
+    results : DataFrame
+        Coefficients, effets marginaux et noms des variables.
+    score : float
+        Précision du modèle.
+    X : DataFrame
+        Données utilisées pour l'entraînement.
+    delta_p : list of float
+        Effets marginaux bruts des variables.
+    """
+
+    val_cols = list(set(VAR_NUM).intersection(parameters))
+    to_dummies = list(set(VAR_CAT).intersection(parameters))
 
     if len(to_dummies) > 0:
-        X = pd.get_dummies(stack_users_data[to_dummies], drop_first=True, dtype=int)
+        df_to_regress = pd.get_dummies(stack_users_df[to_dummies], drop_first=True, dtype=int)
     else:
-        X = pd.DataFrame()
+        df_to_regress = pd.DataFrame()
 
-    X[val_cols] = stack_users_data[val_cols]
-    reg = LogisticRegression(max_iter=10).fit(X, stack_users_data["Employed"])
+    df_to_regress[val_cols] = stack_users_df[val_cols]
+    reg = LogisticRegression(max_iter=10).fit(df_to_regress, stack_users_df["Employed"])
 
-    prob = reg.predict_proba(X)[:, 0]
+    prob = reg.predict_proba(df_to_regress)[:, 0]
     delta_p = []
 
     for key in reg.feature_names_in_:
-        X_mod = X.copy()
+        df_mod = df_to_regress.copy()
 
-        if key in VAL_COLS:
-            X_mod[key] = X_mod[key] - 1
-            prob_mod = reg.predict_proba(X_mod)[:, 0]
+        if key in VAR_NUM:
+            df_mod[key] = df_mod[key] - 1
+            prob_mod = reg.predict_proba(df_mod)[:, 0]
             delta_p.append((prob_mod - prob).mean())
         else:  # To_dummies
-            X_mod[key] = 0
-            prob_mod = reg.predict_proba(X_mod)[:, 0]
-            delta_p.append((prob_mod - prob)[X[key] == 1].mean())
+            df_mod[key] = 0
+            prob_mod = reg.predict_proba(df_mod)[:, 0]
+            delta_p.append((prob_mod - prob)[df_to_regress[key] == 1].mean())
 
     results = pd.DataFrame(
         {
@@ -137,16 +117,51 @@ def get_data_log_regression(parameters):
             "Coeff.": reg.coef_[0],
         }
     )
-    return results, reg.score(X, stack_users_data["Employed"]), X, delta_p
+    return results, reg.score(df_to_regress, stack_users_df["Employed"]), df_to_regress, delta_p
 
-def get_fairness_test(model):
-    return model.model_performance().result
+
+def get_model_performance(model):
+    """
+    Retourne les résultats de performance du modèle spécifié.
+
+    Paramètres
+    ----------
+    model : str
+        Nom du modèle ("Random Forest", "Logistic Regression", "Gradient Boosting").
+
+    Retourne
+    --------
+    result : any
+        Résultat de la méthode `model_performance().result` associée au modèle.
+    """
+
+    lookup = {
+        "Random Forest": [exp2],
+        "Logistic Regression": [exp3],
+        "Gradient Boosting": [exp4],
+    }
+    return lookup[model][0].model_performance().result
+
 
 def get_fairness_check(criteria, privileged):
-    protected = stack_users_data[criteria]
-    f_object_dc = exp1.model_fairness(
-        protected=protected, privileged=privileged, label="Decision Tree"
-    )
+    """
+    Prépare une fonction de visualisation de la fairness selon un critère et un groupe privilégié.
+
+    Paramètres
+    ----------
+    criteria : str
+        Colonne du DataFrame utilisée comme variable protégée.
+    privileged : str or int
+        Valeur considérée comme privilégiée pour cette variable.
+
+    Retourne
+    --------
+    function
+        Fonction prenant un type de plot (`t`) et affichant la comparaison de fairness entre
+        modèles.
+    """
+
+    protected = stack_users_df[criteria]
     f_object_rf = exp2.model_fairness(
         protected=protected, privileged=privileged, label="Random Forest"
     )
@@ -156,15 +171,34 @@ def get_fairness_check(criteria, privileged):
     f_object_gb = exp4.model_fairness(
         protected=protected, privileged=privileged, label="Gradient Boosting"
     )
-    return lambda t: f_object_dc.plot([f_object_rf, f_object_lr, f_object_gb], type=t, show=False)
+    return lambda t: f_object_rf.plot([f_object_lr, f_object_gb], type=t, show=False)
 
 
 def get_fairness_check_after_mitigation(criteria, privileged, model):
-    protected = stack_users_data[criteria]
+    """
+    Prépare une fonction de visualisation de la fairness avant/après mitigation pour un modèle
+    donné.
+
+    Paramètres
+    ----------
+    criteria : str
+        Colonne protégée du DataFrame.
+    privileged : str or int
+        Valeur privilégiée pour cette variable.
+    model : str
+        Nom du modèle ("Random Forest", "Gradient Boosting", "Logistic Regression").
+
+    Retourne
+    --------
+    function
+        Fonction prenant un type de plot (`t`) et affichant la fairness avant/après mitigation.
+    """
+
+    protected = stack_users_df[criteria]
     lookup = {
         "Random Forest": [exp2, exp2_m],
         "Gradient Boosting": [exp4, exp4_m],
-        "Logistic Regression": [exp3, exp3_m]
+        "Logistic Regression": [exp3, exp3_m],
     }
 
     f_object = lookup[model][0].model_fairness(

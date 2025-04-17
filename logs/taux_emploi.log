@@ -1,0 +1,16 @@
+2025-04-17 15:57:42.583 | INFO     | __main__:<module>:16 - Début de la page Streamlit : Taux d'emploi
+2025-04-17 15:57:42.584 | DEBUG    | __main__:<module>:23 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:42.938 | SUCCESS  | __main__:<module>:46 - Fichier de données chargé avec succès.
+2025-04-17 15:57:43.029 | INFO     | __main__:<module>:55 - Traduction des labels effectuée.
+2025-04-17 15:57:43.092 | INFO     | __main__:<module>:64 - Graphique du taux d'emploi généré avec succès.
+2025-04-17 15:57:43.142 | INFO     | __main__:<module>:85 - Fin de l'exécution de la page Taux d'emploi.
+2025-04-17 15:57:43.340 | INFO     | __main__:<module>:25 - Début de la page Streamlit : Répartition géographique
+2025-04-17 15:57:43.343 | DEBUG    | __main__:<module>:38 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:43.349 | DEBUG    | __main__:<module>:39 - Chemin des données pays/langue : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/CountryLanguageStats.xls
+2025-04-17 15:57:43.349 | DEBUG    | __main__:<module>:40 - URL des codes ISO : https://www.iban.com/country-codes
+2025-04-17 15:57:43.777 | SUCCESS  | __main__:<module>:66 - Données StackOverflow chargées avec succès.
+2025-04-17 15:57:43.919 | INFO     | __main__:<module>:76 - Ajout des codes ISO réussi.
+2025-04-17 15:57:43.946 | INFO     | __main__:<module>:91 - Tableau de base pour les cartes généré.
+2025-04-17 15:57:44.141 | INFO     | __main__:<module>:123 - Ajout des informations de continent effectué.
+2025-04-17 15:57:44.151 | INFO     | __main__:<module>:137 - Tableau des continents généré.
+2025-04-17 15:57:44.159 | INFO     | __main__:<module>:180 - Fin de l'exécution de la page Répartition géographique.

@@ -1,0 +1,73 @@
+2025-04-17 15:55:18.816 | INFO     | __main__:<module>:21 - Début de la page Streamlit : Distribution des variables principales
+2025-04-17 15:55:18.818 | DEBUG    | __main__:<module>:28 - Chemin du fichier StackOverflow récupéré : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:55:19.248 | SUCCESS  | __main__:<module>:58 - Fichier chargé avec succès : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:55:19.344 | INFO     | __main__:<module>:69 - Traduction des labels effectuée avec succès
+2025-04-17 15:55:19.345 | INFO     | __main__:<module>:76 - Début de la génération des graphiques
+2025-04-17 15:55:19.844 | SUCCESS  | __main__:<module>:125 - Tous les graphiques ont été générés avec succès
+2025-04-17 15:55:20.165 | INFO     | __main__:<module>:183 - Fin de l'exécution de la page Distribution des variables principales
+2025-04-17 15:57:10.983 | INFO     | __main__:<module>:21 - Début de la page Streamlit : Distribution des variables principales
+2025-04-17 15:57:10.983 | INFO     | __main__:<module>:21 - Début de la page Streamlit : Distribution des variables principales
+2025-04-17 15:57:10.985 | DEBUG    | __main__:<module>:28 - Chemin du fichier StackOverflow récupéré : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:10.985 | DEBUG    | __main__:<module>:28 - Chemin du fichier StackOverflow récupéré : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:11.391 | SUCCESS  | __main__:<module>:58 - Fichier chargé avec succès : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:11.391 | SUCCESS  | __main__:<module>:58 - Fichier chargé avec succès : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:11.506 | INFO     | __main__:<module>:69 - Traduction des labels effectuée avec succès
+2025-04-17 15:57:11.506 | INFO     | __main__:<module>:69 - Traduction des labels effectuée avec succès
+2025-04-17 15:57:11.507 | INFO     | __main__:<module>:76 - Début de la génération des graphiques
+2025-04-17 15:57:11.507 | INFO     | __main__:<module>:76 - Début de la génération des graphiques
+2025-04-17 15:57:11.914 | SUCCESS  | __main__:<module>:125 - Tous les graphiques ont été générés avec succès
+2025-04-17 15:57:11.914 | SUCCESS  | __main__:<module>:125 - Tous les graphiques ont été générés avec succès
+2025-04-17 15:57:12.275 | INFO     | __main__:<module>:183 - Fin de l'exécution de la page Distribution des variables principales
+2025-04-17 15:57:12.275 | INFO     | __main__:<module>:183 - Fin de l'exécution de la page Distribution des variables principales
+2025-04-17 15:57:40.676 | INFO     | __main__:<module>:25 - Début de la page Streamlit : Répartition géographique
+2025-04-17 15:57:40.676 | INFO     | __main__:<module>:25 - Début de la page Streamlit : Répartition géographique
+2025-04-17 15:57:40.688 | DEBUG    | __main__:<module>:38 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:40.688 | DEBUG    | __main__:<module>:38 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:40.688 | DEBUG    | __main__:<module>:39 - Chemin des données pays/langue : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/CountryLanguageStats.xls
+2025-04-17 15:57:40.688 | DEBUG    | __main__:<module>:39 - Chemin des données pays/langue : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/CountryLanguageStats.xls
+2025-04-17 15:57:40.689 | DEBUG    | __main__:<module>:40 - URL des codes ISO : https://www.iban.com/country-codes
+2025-04-17 15:57:40.689 | DEBUG    | __main__:<module>:40 - URL des codes ISO : https://www.iban.com/country-codes
+2025-04-17 15:57:41.133 | SUCCESS  | __main__:<module>:66 - Données StackOverflow chargées avec succès.
+2025-04-17 15:57:41.133 | SUCCESS  | __main__:<module>:66 - Données StackOverflow chargées avec succès.
+2025-04-17 15:57:41.323 | INFO     | __main__:<module>:76 - Ajout des codes ISO réussi.
+2025-04-17 15:57:41.323 | INFO     | __main__:<module>:76 - Ajout des codes ISO réussi.
+2025-04-17 15:57:41.344 | INFO     | __main__:<module>:91 - Tableau de base pour les cartes généré.
+2025-04-17 15:57:41.344 | INFO     | __main__:<module>:91 - Tableau de base pour les cartes généré.
+2025-04-17 15:57:41.651 | INFO     | __main__:<module>:123 - Ajout des informations de continent effectué.
+2025-04-17 15:57:41.651 | INFO     | __main__:<module>:123 - Ajout des informations de continent effectué.
+2025-04-17 15:57:41.660 | INFO     | __main__:<module>:137 - Tableau des continents généré.
+2025-04-17 15:57:41.660 | INFO     | __main__:<module>:137 - Tableau des continents généré.
+2025-04-17 15:57:41.667 | INFO     | __main__:<module>:180 - Fin de l'exécution de la page Répartition géographique.
+2025-04-17 15:57:41.667 | INFO     | __main__:<module>:180 - Fin de l'exécution de la page Répartition géographique.
+2025-04-17 15:57:42.583 | INFO     | __main__:<module>:16 - Début de la page Streamlit : Taux d'emploi
+2025-04-17 15:57:42.583 | INFO     | __main__:<module>:16 - Début de la page Streamlit : Taux d'emploi
+2025-04-17 15:57:42.584 | DEBUG    | __main__:<module>:23 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:42.584 | DEBUG    | __main__:<module>:23 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:42.938 | SUCCESS  | __main__:<module>:46 - Fichier de données chargé avec succès.
+2025-04-17 15:57:42.938 | SUCCESS  | __main__:<module>:46 - Fichier de données chargé avec succès.
+2025-04-17 15:57:43.029 | INFO     | __main__:<module>:55 - Traduction des labels effectuée.
+2025-04-17 15:57:43.029 | INFO     | __main__:<module>:55 - Traduction des labels effectuée.
+2025-04-17 15:57:43.092 | INFO     | __main__:<module>:64 - Graphique du taux d'emploi généré avec succès.
+2025-04-17 15:57:43.092 | INFO     | __main__:<module>:64 - Graphique du taux d'emploi généré avec succès.
+2025-04-17 15:57:43.142 | INFO     | __main__:<module>:85 - Fin de l'exécution de la page Taux d'emploi.
+2025-04-17 15:57:43.142 | INFO     | __main__:<module>:85 - Fin de l'exécution de la page Taux d'emploi.
+2025-04-17 15:57:43.340 | INFO     | __main__:<module>:25 - Début de la page Streamlit : Répartition géographique
+2025-04-17 15:57:43.340 | INFO     | __main__:<module>:25 - Début de la page Streamlit : Répartition géographique
+2025-04-17 15:57:43.343 | DEBUG    | __main__:<module>:38 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:43.343 | DEBUG    | __main__:<module>:38 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-17 15:57:43.349 | DEBUG    | __main__:<module>:39 - Chemin des données pays/langue : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/CountryLanguageStats.xls
+2025-04-17 15:57:43.349 | DEBUG    | __main__:<module>:39 - Chemin des données pays/langue : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/CountryLanguageStats.xls
+2025-04-17 15:57:43.349 | DEBUG    | __main__:<module>:40 - URL des codes ISO : https://www.iban.com/country-codes
+2025-04-17 15:57:43.349 | DEBUG    | __main__:<module>:40 - URL des codes ISO : https://www.iban.com/country-codes
+2025-04-17 15:57:43.777 | SUCCESS  | __main__:<module>:66 - Données StackOverflow chargées avec succès.
+2025-04-17 15:57:43.777 | SUCCESS  | __main__:<module>:66 - Données StackOverflow chargées avec succès.
+2025-04-17 15:57:43.919 | INFO     | __main__:<module>:76 - Ajout des codes ISO réussi.
+2025-04-17 15:57:43.919 | INFO     | __main__:<module>:76 - Ajout des codes ISO réussi.
+2025-04-17 15:57:43.946 | INFO     | __main__:<module>:91 - Tableau de base pour les cartes généré.
+2025-04-17 15:57:43.946 | INFO     | __main__:<module>:91 - Tableau de base pour les cartes généré.
+2025-04-17 15:57:44.141 | INFO     | __main__:<module>:123 - Ajout des informations de continent effectué.
+2025-04-17 15:57:44.141 | INFO     | __main__:<module>:123 - Ajout des informations de continent effectué.
+2025-04-17 15:57:44.151 | INFO     | __main__:<module>:137 - Tableau des continents généré.
+2025-04-17 15:57:44.151 | INFO     | __main__:<module>:137 - Tableau des continents généré.
+2025-04-17 15:57:44.159 | INFO     | __main__:<module>:180 - Fin de l'exécution de la page Répartition géographique.
+2025-04-17 15:57:44.159 | INFO     | __main__:<module>:180 - Fin de l'exécution de la page Répartition géographique.
