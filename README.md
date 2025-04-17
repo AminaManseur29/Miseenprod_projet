@@ -94,3 +94,8 @@ Contributors : Amina MANSEUR, Lila MEKKI.
 
 
 
+# Créer un fichier .env
+Créer un fichier .env qui contient les chemins vers les bases de données stockées dans un environnement cloud (comme le SSPCloud):
+- stack_users_data_path
+- countries_lang_data_path
+- iso_url
