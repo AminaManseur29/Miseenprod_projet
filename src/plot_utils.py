@@ -15,7 +15,7 @@ from wordcloud import WordCloud
 
 from collections import Counter
 
-def plot_hist(data, col, title):
+def plot_hist(data, col, title,xaxis_title= None,yaxis_title = "Effectif"):
     """
     Plots histogram of the column required (col) and gives a title. 
     Args : 
@@ -25,11 +25,13 @@ def plot_hist(data, col, title):
     Returns : 
         a bar plot of the required data 
     """
+    xaxis_label = xaxis_title if xaxis_title is not None else col
+
     fig = px.histogram(data, x=col, barmode='group', text_auto=True)
     fig.update_layout(
         title_text=title,
         xaxis_title_text=col, 
-        yaxis_title_text="Effectif",
+        yaxis_title_text=yaxis_title,
         bargap=0.2, 
         bargroupgap=0.1 
     )
@@ -56,9 +58,166 @@ def plot_hist_orders(data, col, title, cat_orders):
     )
     return fig
 
+def plot_bar(data,col,title):
+    """
+    Creates a bar plot of the column (col) and gives a title. 
+
+    Parameters :
+    ----------
+    data : pandas.DataFrame
+            DataFrame of the langages used 
+    col : str
+        Column of interest for the bar plot 
+    title : str 
+        Title of the graph 
+
+    Returns:
+    -------
+    plotly bar plot 
+    """
+
+    fig = px.bar(
+        data.sort_values(by="Count"),
+        x="Count",
+        y=col,
+        orientation="h",
+        text_auto=True,
+        color="Count",
+        color_continuous_scale="darkmint",
+    )
+
+    fig.update_layout(
+        title_text=title,
+        xaxis_title_text="Nombre d'occurences",
+        yaxis_title_text=col,
+        bargap=0.2,
+        bargroupgap=0.1,
+        width=800,
+        height=700,
+    )
+
+def plot_bar_orders(data, y_col, color_col, title, cat_orders, x_col="percentage"):
+    """
+    Creates a horizontal bar plot showing the distribution of categories with percentages.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        The DataFrame containing the data to plot.  
+    y_col : str
+        The column to be shown on the Y-axis (e.g. 'Gender').  
+    color_col : str
+        The column to color the bars by (e.g. 'EmployedCat').
+    title : str
+        The title of the plot.
+    cat_orders : dict
+        Dictionary specifying the order of categorical variables for better display.  
+    x_col : str, optional
+        The column to be shown on the X-axis (default is 'percentage').
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        A Plotly horizontal bar chart with percentage formatting and custom styling.
+    """
+    fig = px.bar(
+        data,
+        orientation="h",
+        x=x_col,
+        y=y_col,
+        color=color_col,
+        text_auto=True,
+        category_orders=cat_orders,
+        color_discrete_sequence=px.colors.qualitative.Pastel,
+    )
+
+    fig.update_layout(
+        title_text=title,
+        xaxis_title_text="Pourcentage",
+        yaxis_title_text=y_col,
+        legend_title_text=color_col,
+        bargap=0.2,
+        bargroupgap=0.1,
+        width=800,
+        height=700,
+    )
+
+    fig.update_traces(texttemplate="%{x}%")
+    return fig
+
+def plot_box(
+    data,
+    x_col,
+    y_col,
+    color_col,
+    title,
+    color_sequence=["rgb(246, 207, 113)", "rgb(102, 197, 204)"],
+    xaxis_title=None,
+    yaxis_title=None
+):
+    """
+    Creates a box plot to visualize the distribution of a numerical variable
+    across different categories.
+
+    Parameters
+    ----------
+    data : pandas.DataFrame
+        The input DataFrame containing the data to plot.
+
+    x_col : str
+        The column to display on the X-axis (categorical variable).
+
+    y_col : str
+        The column to display on the Y-axis (numerical variable).
+
+    color_col : str
+        The column to color the boxes by. Usually the same as x_col for categorical comparison.
+
+    title : str
+        The title of the plot.
+
+    color_sequence : list of str, optional
+        A list of color codes to use for the boxes (default is pastel-like colors).
+
+    xaxis_title : str, optional
+        Custom label for the X-axis. Defaults to the value of `x_col`.
+
+    yaxis_title : str, optional
+        Custom label for the Y-axis. Defaults to the value of `y_col`.
+
+    Returns
+    -------
+    fig : plotly.graph_objects.Figure
+        A Plotly box plot figure with customized layout.
+    """
+
+    x_title = xaxis_title if xaxis_title is not None else x_col
+    y_title = yaxis_title if yaxis_title is not None else y_col
+
+    fig = px.box(
+        data,
+        x=x_col,
+        y=y_col,
+        color=color_col,
+        color_discrete_sequence=color_sequence,
+    )
+
+    fig.update_layout(
+        title_text=title,
+        xaxis_title_text=x_title,
+        yaxis_title_text=y_title,
+        legend_title_text=color_col,
+        bargap=0.2,
+        bargroupgap=0.1,
+        width=800,
+        height=700,
+    )
+
+    return fig
+
 def plot_map(df_carto, min_respondents=100):
     """
-    Create a choropleth map showing the employment rate per country 
+    Creates a choropleth map showing the employment rate per country 
     (only for countries with at least `min_respondents`).
 
     Parameters:
@@ -75,7 +234,7 @@ def plot_map(df_carto, min_respondents=100):
     """
     df_filtered = df_carto[df_carto["count"] > min_respondents]
 
-    fig_taux = px.choropleth(
+    fig = px.choropleth(
         df_filtered,
         locations="ISO",
         color="percentage",
@@ -83,14 +242,14 @@ def plot_map(df_carto, min_respondents=100):
         color_continuous_scale=px.colors.sequential.Sunsetdark,
     )
 
-    fig_taux.update_layout(
+    fig.update_layout(
         title_text=(
             f"Taux d'emploi par pays (≥ {min_respondents} répondants)"
         ),
         coloraxis_colorbar_title_text="Taux d'emploi",
     )
 
-    return fig_taux
+    return fig
 
 def plot_choropleth_map(
     df,
@@ -158,12 +317,17 @@ def make_wordcloud(data, col):
         data (DataFrame) 
         col (str) : column from which the wordcloud is extracted
     Returns : 
-        a wordcloud 
+        a wordcloud and the count of the items in the desired column 
     """
-    languages = [str(cat).split(";") for cat in data[col]]
-    languages_all = [item for sublist in languages for item in sublist] # découpage en mots
-    languages_count = Counter(languages_all)
+    tokens = [str(cat).split(";") for cat in data[col]]
+    item_all = [item for sublist in tokens for item in sublist] # découpage en mots
+    item_count = Counter(item_all) # décompte occurrences
 
     # Création d'un nuage de mots
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(languages_count)
-    return wordcloud
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(item_count)
+    
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.imshow(wordcloud, interpolation="bilinear")
+    ax.axis("off")
+
+    return fig,item_count
