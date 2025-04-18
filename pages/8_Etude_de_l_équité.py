@@ -3,14 +3,20 @@ Ce module génère la page Etude de l'équité de l'application de visualisation
 """
 
 import streamlit as st
+from loguru import logger
 from src.models_visualisation_utils import (
     get_fairness_check,
     get_fairness_check_after_mitigation,
 )
 
-# ==========================
-# User interface
-# ==========================
+# Initialisation du logger
+logger.add(
+    "logs/etude_equite.log",
+    rotation="1 MB",
+    retention="10 days",
+    level="DEBUG",
+)
+logger.info("Début de la page Streamlit : Etude de l'équité")
 
 # Configuration de la page
 st.set_page_config(
@@ -84,13 +90,19 @@ latext = r'''
     > $PR = \frac{TP + FP}{TP + FP + TN + FN}$
 '''
 
+# Log de l'affichage du texte explicatif
+logger.info("Affichage du texte explicatif sur l'équité et les métriques utilisées.")
 tab_fairness_test.write(latext)
 
+# Sélection de la catégorie "privileged"
 criteria_selector_3 = tab_fairness_test.selectbox(
     'Quelle catégorie considérer comme "privileged" ?',
     ["Man", "Woman"],
 )
+# Log de la catégorie sélectionnée
+logger.info(f"Sélection de la catégorie 'privileged' : {criteria_selector_3}")
 
+# Obtenir les résultats de l'équité
 plot = get_fairness_check("Gender", criteria_selector_3)
 
 (
@@ -111,6 +123,8 @@ plot = get_fairness_check("Gender", criteria_selector_3)
     ]
 )
 
+# Affichage des graphiques
+logger.info("Affichage des graphiques d'équité.")
 t5_fairness_check.plotly_chart(
     plot("fairness_check"), theme=None, use_container_width=True
 )
@@ -164,18 +178,29 @@ tab_bias_mitigation.markdown(
     """
 )
 
+# Sélection du modèle à traiter
 model_selector = tab_bias_mitigation.selectbox(
     "Quel modèle devrait avoir ses biais mitigés ?",
     ["Random Forest", "Gradient Boosting", "Logistic Regression"],
     key="bias6_model_selectbox",
 )
 
+# Log du modèle sélectionné
+logger.info(f"Sélection du modèle pour la mitigation des biais : {model_selector}")
+
+# Sélection de la catégorie "privileged" pour la mitigation
 criteria_selector_4 = tab_bias_mitigation.selectbox(
     'Quelle catégorie considérer comme "privileged" ?',
     ["Man", "Woman"],
     key="bias6_2_selectbox",
 )
 
+# Log de la catégorie sélectionnée
+logger.info(
+    f"Sélection de la catégorie 'privileged' pour la mitigation des biais : {criteria_selector_4}"
+)
+
+# Obtenir les résultats de l'équité après mitigation
 plot = get_fairness_check_after_mitigation(
     "Gender", criteria_selector_4, model_selector
 )
@@ -198,6 +223,8 @@ plot = get_fairness_check_after_mitigation(
     ]
 )
 
+# Affichage des graphiques après mitigation des biais
+logger.info("Affichage des graphiques après mitigation des biais.")
 t6_fairness_check.plotly_chart(
     plot("fairness_check"), theme=None, use_container_width=True
 )
@@ -210,3 +237,5 @@ t6_performance_and_fairness.plotly_chart(
     plot("performance_and_fairness"), theme=None, use_container_width=True
 )
 t6_heatmap.plotly_chart(plot("heatmap"), theme=None, use_container_width=True)
+
+logger.info("Fin de l'exécution de la page Etude de l'équité")
