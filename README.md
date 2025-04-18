@@ -10,25 +10,25 @@
 ## Overview
 This project explores models for the selection of applicants in an hiring process, in order to facilitate the work of the HR department of companies. It accounts for ESG requirements, and more specifically gender oriented. 
 
-## Motivation ? 
-
-
 ## Project structure 
 
 ```
 .
 ├── data/                    # Folder containing the data used 
-├── figures/                 # The figures we've drawn
-notebook  
-├── reports/                 # Streamlit pages 
+├── logs/                    # Folder containing the logs of the different scripts
+├── notebooks                # Notebook of the project 
+├── output                   # Results of the models   
+├── pages/                   # Streamlit pages 
 ├── pictures/                # Some pictures for the Readme
-├── output                   # Results of the models 
 ├── src
-   ├── data_analysis         # Analysis of the data 
+   ├── __init__              # Initialisation file
    ├── data_preprocessing    # Cleaning and merging of datasets
    ├── models                # Implemented models
    ├── evaluation            # Evaluation of the models
    └── main                  # Execution file 
+├── .env                     # Environment variables stored 
+├── .gitignore               # Files to ignore 
+├── Accueil                  # Python file for the welcoming page of the project
 ├── README.md                # Project documentation
 └── requirements.txt         # Python dependencies
 
@@ -40,7 +40,7 @@ notebook
 ### Step 1 : Clone the repository 
 
 ```
-git clone
+git clone 
 
 ```
 ### Step 2 : Create a virtual environment 
@@ -59,8 +59,10 @@ pip install -r requirements.txt
 ```
 ### Step 4 : Launch the app 
 
-# Comment Utiliser
-Toutes les analyses sont présentées dans le notebook. 
+
+
+# How to use it ? 
+
 
 Par ailleurs, une application développée via Streamlit présente la distribution des variables d'intérêt et facilite la navigation entre les différents graphiques. Elle présente aussi de façon interactive les modèles réalisés. 
 
@@ -93,9 +95,8 @@ Authors : Pierre CLAYTON, Clément DE LARDEMELLE, Louise LIGONNIERE.
 Contributors : Amina MANSEUR, Lila MEKKI. 
 
 
-
-# Créer un fichier .env
-Créer un fichier .env qui contient les chemins vers les bases de données stockées dans un environnement cloud (comme le SSPCloud):
+# Create a .env file
+You need to create a .env file that contains the paths to the databases stored in a cloud environment (such as the SSPCloud) :
 - stack_users_data_path
 - countries_lang_data_path
 - iso_url
