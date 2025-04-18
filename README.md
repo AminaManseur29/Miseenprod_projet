@@ -1,102 +1,112 @@
- <img src="https://github.com/louiseligonniere/Miseenprod_projet/blob/main/LOGO-ENSAE.png?raw=true" alt="ENSAE logo" width="200"/>
+<img src="pictures/LOGO-ENSAE.png" alt="Logo ENSAE" width="200"/>
 
+<p align="right">
+  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Licence MIT"/>
+</p>
 
-![License](https://github.com/louiseligonniere/Miseenprod_projet/blob/main/LICENSE)
 
 ---
 
-# Candidate selection for HR department
+# Sélection de candidats pour les départements RH
 
-## Overview
-This project explores models for the selection of applicants in an hiring process, in order to facilitate the work of the HR department of companies. It accounts for ESG requirements, and more specifically gender oriented. 
+## 🧠 Présentation du projet
 
-## Project structure 
+Ce projet explore différents modèles pour accompagner les **ressources humaines** dans le processus de **sélection de candidats** à l’embauche. Il vise à **faciliter la prise de décision** tout en prenant en compte des critères **ESG**, notamment en lien avec **l’égalité de genre**.
 
-```
+Le projet comprend :
+- le nettoyage et l’enrichissement de données issues de l’enquête StackOverflow,
+- la modélisation du processus de sélection,
+- une application interactive développée avec Streamlit.
+
+---
+
+## 📁 Arborescence du projet
+
+```bash
 .
-├── data/                    # Folder containing the data used 
-├── logs/                    # Folder containing the logs of the different scripts
-├── notebooks                # Notebook of the project 
-├── output                   # Results of the models   
-├── pages/                   # Streamlit pages 
-├── pictures/                # Some pictures for the Readme
-├── src
-   ├── __init__              # Initialisation file
-   ├── data_preprocessing    # Cleaning and merging of datasets
-   ├── models                # Implemented models
-   ├── evaluation            # Evaluation of the models
-   └── main                  # Execution file 
-├── .env                     # Environment variables stored 
-├── .gitignore               # Files to ignore 
-├── Accueil                  # Python file for the welcoming page of the project
-├── README.md                # Project documentation
-└── requirements.txt         # Python dependencies
+├── data/                    # Données brutes et nettoyées
+├── logs/                   # Logs des différents scripts
+├── notebooks/              # Notebook principal du projet
+├── output/                 # Résultats des modèles
+├── pages/                  # Pages de l'application Streamlit
+├── pictures/               # Images utilisées dans le README
+├── src/
+│   ├── __init__.py         # Fichier d'initialisation du package
+│   ├── data_preprocessing.py # Scripts de nettoyage et de préparation des données
+│   ├── models_baseline_train_save.py             # Entraînement et sauvegarde des modèles de base
+│   ├── models_mitigated_train_save.py         # Entraînement et sauvegarde des modèles atténués
+    ├── models_visualisation_utils.py          # Utilitaires pour la visualisation des modèles
+    └── plot_utils.py       # Utilitaires pour la création de graphiques
+              # Logique principale de l'application
+├── .env                    # Variables d’environnement
+├── .gitignore              # Fichiers et dossiers ignorés par Git
+├── Accueil.py              # Page d'accueil de l'application Streamlit
+├── LICENCE                 # Licence du projet
+├── README.md               # Documentation du projet
+└── requirements.txt        # Dépendances Python
 
 ```
 
+## ⚙️ Installation
 
-## Installation 
+### 1. Cloner le dépôt
 
-### Step 1 : Clone the repository 
-
+```bash
+git clone https://github.com/louiseligonniere/Miseenprod_projet.git
+cd Miseenprod_projet
 ```
-git clone 
 
-```
-### Step 2 : Create a virtual environment 
-
-```
+### 2. Créer et activer un environnement virtuel
+```bash
 python -m venv env
-source env/bin/activate # On Windows, use `env\Scripts\activate`
-
+source env/bin/activate        # Sous Windows : env\Scripts\activate
 ```
 
-### Step 3 : Install dependencies 
-
-```
-pip install -r requirements.txt 
-
-```
-### Step 4 : Launch the app 
-
-
-
-# How to use it ? 
-
-
-Par ailleurs, une application développée via Streamlit présente la distribution des variables d'intérêt et facilite la navigation entre les différents graphiques. Elle présente aussi de façon interactive les modèles réalisés. 
-
-**Nous vous invitons à consulter cette application** (le contenu de ses pages est toutefois reporté dans les sections 4 à 6 du notebook).
-à compléter 
-
-
-*Étapes pour lancer l'application* : 
-- il est nécessaire de commencer par exécuter l'intégralité du notebook (sinon, la page présentant les modèles ne charge pas entièrement),
-- ouvrir un terminal,
-- se placer dans le dossier 'Projet-Python-ENSAE' (qui contient le script de lancement de l'application 'Accueil.py' et le dossier 'pages' contenant les scripts des pages),
-- exécuter la commande suivante : streamlit run Accueil.py --server.port 5000 --server.address 0.0.0.0
-
-**Attention** : si vous consultez le Notebook dans un environnement Jupyter via le SSP Cloud, il est nécessaire d'avoir ouvert au préalable un *custom service port* au lancement du service Jupyter. Vous pouvez le faire dans la 'Configuration Jupyter-Python', onglet 'Networking' : cochez 'Enable a custom service port'. Par défaut, le port est 5000. Attention à bien spécifier le même port dans la commande ci-dessus. 
-
-
-```
-blglbllbg
+### 3. Installer les dépendances
+```bash
+pip install -r requirements.txt
 ```
 
-- **Data** : Données d’enquête de StackOverflow sur les développeurs web : https://insights.stackoverflow.com/survey. Nous avons enrichi ces données avec des données à la fois webscrappées et tirées directement d’internet sous forme d’Excel.
-- **Notebooks** : Il y a un seul Jupyter notebook `Notebook_Project.ipynb`
+# 🚀 Lancer l'application Streamlit
+```bash
+streamlit run Accueil.py
+```
 
-## License 
-This project is licensed under the MIT License. 
+# 📊 Fonctionnalités de l'application
+L'application Streamlit permet :
+- une visualisation interactive des variables d’intérêt,
+- l’exploration des modèles prédictifs utilisés,
+- une navigation claire entre plusieurs pages de l’interface.
 
-## Contributions
+# 📦 Données
+- Source principale : Enquête développeurs StackOverflow
+- Données enrichies par : 
+      - du web scraping,
+      - des fichiers Excel externes (langues, pays, ISO...).
 
-Authors : Pierre CLAYTON, Clément DE LARDEMELLE, Louise LIGONNIERE. 
-Contributors : Amina MANSEUR, Lila MEKKI. 
+# 📓 Notebook
+Un seul notebook synthétise l’analyse : notebooks/Notebook_Project.ipynb
+
+# 🔐 Fichier .env
+Créer un fichier .env à la racine du projet contenant les chemins vers les jeux de données hébergés sur le cloud (par ex. SSPCloud) :
+
+```bash
+stack_users_data_path=...
+countries_lang_data_path=...
+iso_url=...
+```
+## Explication :
+- **stack_users_data_path** : Cette variable pointe vers les données d'enquête StackOverflow, qui sont utilisées pour analyser les utilisateurs.
+- **countries_lang_data_path** : Elle est utilisée pour localiser un fichier avec des informations supplémentaires sur les pays et les langues.
+- **iso_url** : L'URL de cette variable sert à accéder à une ressource en ligne contenant des données ISO, utiles pour l'analyse.
 
 
-# Create a .env file
-You need to create a .env file that contains the paths to the databases stored in a cloud environment (such as the SSPCloud) :
-- stack_users_data_path
-- countries_lang_data_path
-- iso_url
+# 👥 Auteurs et contributrices
+Auteurs initiaux : Pierre Clayton, Clément de Lardemelle, Louise Ligonnière
+
+Contributrices : Amina Manseur, Lila Mekki
+
+Ce projet a été repris et adapté par Louise, Lila et Amina dans le but de le déployer sous forme d’application web interactive avec Streamlit.
+
+# 📝 Licence
+Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus d'informations.
