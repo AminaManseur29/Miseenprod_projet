@@ -1,8 +1,9 @@
-<img src="https://github.com/louiseligonniere/Miseenprod_projet/blob/main/LOGO-ENSAE.png?raw=true" alt="Logo ENSAE" width="200"/>
+<img src="pictures/LOGO-ENSAE.png" alt="Logo ENSAE" width="200"/>
 
 <p align="right">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Licence MIT"/>
 </p>
+
 
 ---
 
@@ -72,7 +73,6 @@ streamlit run Accueil.py
 ```
 
 # 📊 Fonctionnalités de l'application
-
 L'application Streamlit permet :
 - une visualisation interactive des variables d’intérêt,
 - l’exploration des modèles prédictifs utilisés,
@@ -95,6 +95,11 @@ stack_users_data_path=...
 countries_lang_data_path=...
 iso_url=...
 ```
+## Explication :
+- **stack_users_data_path** : Cette variable pointe vers les données d'enquête StackOverflow, qui sont utilisées pour analyser les utilisateurs.
+- **countries_lang_data_path** : Elle est utilisée pour localiser un fichier avec des informations supplémentaires sur les pays et les langues.
+- **iso_url** : L'URL de cette variable sert à accéder à une ressource en ligne contenant des données ISO, utiles pour l'analyse.
+
 
 # 👥 Auteurs et contributrices
 Auteurs initiaux : Pierre Clayton, Clément de Lardemelle, Louise Ligonnière
