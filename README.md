@@ -4,6 +4,11 @@
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Licence MIT"/>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8-blue.svg" alt="Python 3.8" />
+  <img src="https://img.shields.io/badge/Streamlit-1.0-orange.svg" alt="Streamlit" />
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License MIT" />
+</p>
 
 ---
 
@@ -17,6 +22,15 @@ Le projet comprend :
 - le nettoyage et l’enrichissement de données issues de l’enquête StackOverflow,
 - la modélisation du processus de sélection,
 - une application interactive développée avec Streamlit.
+
+---
+
+## 🌐 Accéder à l'application déployée
+
+L'application est déployée et accessible à l'adresse suivante :  
+[https://miseenappprojet-zrcijatvpprbtfrd46xevu.streamlit.app/](https://miseenappprojet-zrcijatvpprbtfrd46xevu.streamlit.app/)
+
+Vous pouvez tester l'application en temps réel en suivant ce lien.
 
 ---
 
@@ -46,6 +60,7 @@ Le projet comprend :
 └── requirements.txt        # Dépendances Python
 
 ```
+---
 
 ## ⚙️ Installation
 
@@ -67,27 +82,7 @@ source env/bin/activate        # Sous Windows : env\Scripts\activate
 pip install -r requirements.txt
 ```
 
-# 🚀 Lancer l'application Streamlit
-```bash
-streamlit run Accueil.py
-```
-
-# 📊 Fonctionnalités de l'application
-L'application Streamlit permet :
-- une visualisation interactive des variables d’intérêt,
-- l’exploration des modèles prédictifs utilisés,
-- une navigation claire entre plusieurs pages de l’interface.
-
-# 📦 Données
-- Source principale : Enquête développeurs StackOverflow
-- Données enrichies par : 
-      - du web scraping,
-      - des fichiers Excel externes (langues, pays, ISO...).
-
-# 📓 Notebook
-Un seul notebook synthétise l’analyse : notebooks/Notebook_Project.ipynb
-
-# 🔐 Fichier .env
+## 🔐 Fichier .env
 Créer un fichier .env à la racine du projet contenant les chemins vers les jeux de données hébergés sur le cloud (par ex. SSPCloud) :
 
 ```bash
@@ -95,18 +90,38 @@ stack_users_data_path=...
 countries_lang_data_path=...
 iso_url=...
 ```
-## Explication :
+### Explication :
 - **stack_users_data_path** : Cette variable pointe vers les données d'enquête StackOverflow, qui sont utilisées pour analyser les utilisateurs.
 - **countries_lang_data_path** : Elle est utilisée pour localiser un fichier avec des informations supplémentaires sur les pays et les langues.
 - **iso_url** : L'URL de cette variable sert à accéder à une ressource en ligne contenant des données ISO, utiles pour l'analyse.
 
+## 🚀 Lancer l'application Streamlit
+Après avoir effectué les installations nécessaires, l'application Stremlit peut être lancée directement depuis un terminal via :
+```bash
+streamlit run Accueil.py
+```
 
-# 👥 Auteurs et contributrices
+## 📊 Fonctionnalités de l'application
+L'application Streamlit permet :
+- une visualisation interactive des variables d’intérêt,
+- l’exploration des modèles prédictifs utilisés,
+- une navigation claire entre plusieurs pages de l’interface.
+
+## 📦 Données
+- Source principale : Enquête développeurs StackOverflow
+- Données enrichies par : 
+      - du web scraping,
+      - des fichiers Excel externes (langues, pays, ISO...).
+
+## 📓 Notebook
+Un seul notebook synthétise l’analyse : notebooks/Notebook_Project.ipynb
+
+## 👥 Auteurs et contributrices
 Auteurs initiaux : Pierre Clayton, Clément de Lardemelle, Louise Ligonnière
 
 Contributrices : Amina Manseur, Lila Mekki
 
 Ce projet a été repris et adapté par Louise, Lila et Amina dans le but de le déployer sous forme d’application web interactive avec Streamlit.
 
-# 📝 Licence
+## 📝 Licence
 Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus d'informations.
