@@ -1,4 +1,9 @@
 # data/
-# .env
-# logs
 env/
+logs/
+output/models/
+pages/__pycache__/
+pages/.ipynb_checkpoints/
+src/__pycache__/
+# .env
+core

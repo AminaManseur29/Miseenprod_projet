@@ -10,11 +10,12 @@ from collections import Counter
 
 import matplotlib.pyplot as plt
 import plotly.express as px
-from plotly.offline import init_notebook_mode
+# from plotly.offline import init_notebook_mode
 from wordcloud import WordCloud
 
 # Initialize Plotly for notebooks
-init_notebook_mode(connected=True)
+# init_notebook_mode(connected=True)
+
 
 def plot_hist(data, col, title, xaxis_title=None, yaxis_title="Effectif"):
     """

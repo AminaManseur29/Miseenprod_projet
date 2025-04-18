@@ -463,7 +463,7 @@ def add_gni_per_capita(df, path_to_excel):
     df["GNIperCapita"] = df["Country"].map(gnipc_dict)
 
     return df
-import pandas as pd
+
 
 def compute_top_languages_count(df, source_col, top_languages_list, new_col="TopLanguagesCount"):
     """
@@ -498,16 +498,18 @@ def group_percentage_by(df, group_cols, count_col_name="count", percent_col_name
     ----------
     df : pandas.DataFrame
         The input DataFrame containing the data to be grouped and analyzed.
-    
+
     group_cols : list of str
-        A list of column names to group by. The first column is used to compute subgroup percentages.
-        For example: ["Gender", "EmployedCat"].
-    
+        A list of column names to group by. The first column is used to compute subgroup
+        percentages.
+        For example: ["Gender", "EmployedCat"]
+
     count_col_name : str, optional
         Name of the column in the result that will contain the raw counts (default is "count").
-    
+
     percent_col_name : str, optional
-        Name of the column in the result that will contain the percentage values (default is "percentage").
+        Name of the column in the result that will contain the percentage values (default is
+        "percentage").
 
     Returns
     -------
@@ -531,9 +533,12 @@ def group_percentage_by(df, group_cols, count_col_name="count", percent_col_name
 
     return grouped_df
 
-import pandas as pd
 
-def categorize_employment_status(df, column="Employed", new_col="EmployedCat", labels=["Sans emploi", "En emploi"]):
+def categorize_employment_status(
+    df, column="Employed",
+    new_col="EmployedCat",
+    labels=["Sans emploi", "En emploi"]
+):
     """
     Converts a binary employment column into a categorical column with readable labels.
 
@@ -562,5 +567,5 @@ def categorize_employment_status(df, column="Employed", new_col="EmployedCat", l
         bins=[-1, 0, 1],
         labels=labels
     ).astype("object")
-    
+
     return df_copy

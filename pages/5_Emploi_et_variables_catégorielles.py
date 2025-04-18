@@ -6,7 +6,6 @@ import pandas as pd
 from dotenv import load_dotenv
 from loguru import logger
 
-
 from src.plot_utils import (
     plot_bar_orders,
 )
