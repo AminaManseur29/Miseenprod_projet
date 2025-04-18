@@ -62,9 +62,8 @@ st.pyplot(fig_lang_cloud)
 
 # Dataframe réduit des 20 langages les plus utilisés
 try:
-    count_lang20 = lang_count.most_common(20)
     top_languages20 = pd.DataFrame(
-        count_lang20, columns=["Langage", "Count"], index=range(1, 21)
+        lang_count.most_common(20), columns=["Langage", "Count"], index=range(1, 21)
     )
     logger.info("Dataframe des 20 langages les plus utilisés calculé avec succès")
 except Exception as e:
@@ -74,9 +73,8 @@ except Exception as e:
 
 # Dataframe réduit des 10 langages les plus maîtrisés parmi les 20 plus utilisés
 try:
-    top_languages = count_lang20.most_common(10)
     top_languages = pd.DataFrame(
-        top_languages, columns=["Langage", "Nombre d'occurences"], index=range(1, 11)
+        lang_count.most_common(10), columns=["Langage", "Nombre d'occurences"], index=range(1, 11)
     )
     top_lang_alter = compute_top_languages_count(
         stack_users_df, "HaveWorkedWith", top_languages

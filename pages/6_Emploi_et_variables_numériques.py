@@ -66,10 +66,8 @@ except Exception as e:
 # Dataframe réduit des 10 langages les plus maîtrisés parmi les 20 plus utilisés
 try:
     fig_lang_cloud, lang_count = make_wordcloud(stack_users_df, "HaveWorkedWith")
-    count_lang20 = lang_count.most_common(20)
-    top_languages = count_lang20.most_common(10)
     top_languages = pd.DataFrame(
-        top_languages, columns=["Langage", "Nombre d'occurences"], index=range(1, 11)
+        lang_count.most_common(10), columns=["Langage", "Nombre d'occurences"], index=range(1, 11)
     )
     top_lang_alter = compute_top_languages_count(
         stack_users_df, "HaveWorkedWith", top_languages
@@ -94,7 +92,7 @@ fig_code = plot_box(
     color_col="EmployedCat",
     title="Distribution des années de code selon le statut d'emploi",
     xaxis_title="Statut d'emploi",
-    yaxis_title_text="Années de code",
+    yaxis_title = "Années de code"
 )
 
 # 2. Années de code pro vs. statut d'emploi
@@ -105,7 +103,7 @@ fig_codepro = plot_box(
     color_col="EmployedCat",
     title="Distribution des années de code professionnel selon le statut d'emploi",
     xaxis_title="Statut d'emploi",
-    yaxis_title_text="Années de code professionnel",
+    yaxis_title="Années de code professionnel",
 )
 
 # 3. Salaire précédent vs. statut d'emploi

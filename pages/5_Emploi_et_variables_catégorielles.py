@@ -116,7 +116,7 @@ fig_edLevel = plot_bar_orders(
     "EdLevel",
     "EmployedCat",
     "Distribution du statut d'emploi selon le niveau d'éducation",
-    category_orders={
+    cat_orders={
         "EdLevel": [
             "Pas d'éducation supérieure",
             "Licence",
