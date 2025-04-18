@@ -1,10 +1,6 @@
 <img src="pictures/LOGO-ENSAE.png" alt="Logo ENSAE" width="200"/>
 
 <p align="right">
-  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Licence MIT"/>
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/Python-3.8-blue.svg" alt="Python 3.8" />
   <img src="https://img.shields.io/badge/Streamlit-1.0-orange.svg" alt="Streamlit" />
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License MIT" />
