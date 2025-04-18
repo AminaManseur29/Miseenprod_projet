@@ -237,3 +237,46 @@
 2025-04-18 13:17:22.771 | SUCCESS  | __main__:<module>:51 - Fichier chargé avec succès : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
 2025-04-18 13:17:24.645 | INFO     | __main__:<module>:69 - Dataframe des 20 langages les plus utilisés calculé avec succès
 2025-04-18 13:17:24.648 | ERROR    | __main__:<module>:88 - Erreur lors de la création du Dataframe : 'list' object has no attribute 'most_common'
+2025-04-18 13:51:33.087 | INFO     | __main__:<module>:21 - Début de la page Streamlit : Distribution des variables principales
+2025-04-18 13:51:33.091 | DEBUG    | __main__:<module>:28 - Chemin du fichier StackOverflow récupéré : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:51:33.905 | SUCCESS  | __main__:<module>:58 - Fichier chargé avec succès : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:51:34.077 | INFO     | __main__:<module>:69 - Traduction des labels effectuée avec succès
+2025-04-18 13:51:34.077 | INFO     | __main__:<module>:76 - Début de la génération des graphiques
+2025-04-18 13:51:34.891 | SUCCESS  | __main__:<module>:125 - Tous les graphiques ont été générés avec succès
+2025-04-18 13:51:35.329 | INFO     | __main__:<module>:183 - Fin de l'exécution de la page Distribution des variables principales
+2025-04-18 13:51:48.083 | INFO     | __main__:<module>:16 - Début de la page Streamlit : Taux d'emploi
+2025-04-18 13:51:48.087 | DEBUG    | __main__:<module>:23 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:51:48.677 | SUCCESS  | __main__:<module>:46 - Fichier de données chargé avec succès.
+2025-04-18 13:51:48.841 | INFO     | __main__:<module>:55 - Traduction des labels effectuée.
+2025-04-18 13:51:48.967 | INFO     | __main__:<module>:64 - Graphique du taux d'emploi généré avec succès.
+2025-04-18 13:51:49.023 | INFO     | __main__:<module>:85 - Fin de l'exécution de la page Taux d'emploi.
+2025-04-18 13:51:51.200 | INFO     | __main__:<module>:16 - Début de la page Streamlit : Taux d'emploi
+2025-04-18 13:51:51.203 | DEBUG    | __main__:<module>:23 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:51:51.678 | SUCCESS  | __main__:<module>:46 - Fichier de données chargé avec succès.
+2025-04-18 13:51:51.739 | INFO     | __main__:<module>:25 - Début de la page Streamlit : Répartition géographique
+2025-04-18 13:51:51.769 | DEBUG    | __main__:<module>:38 - Chemin des données StackOverflow : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:51:51.780 | DEBUG    | __main__:<module>:39 - Chemin des données pays/langue : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/CountryLanguageStats.xls
+2025-04-18 13:51:51.781 | DEBUG    | __main__:<module>:40 - URL des codes ISO : https://www.iban.com/country-codes
+2025-04-18 13:51:51.881 | INFO     | __main__:<module>:55 - Traduction des labels effectuée.
+2025-04-18 13:51:52.015 | INFO     | __main__:<module>:64 - Graphique du taux d'emploi généré avec succès.
+2025-04-18 13:51:52.723 | SUCCESS  | __main__:<module>:66 - Données StackOverflow chargées avec succès.
+2025-04-18 13:51:53.116 | INFO     | __main__:<module>:76 - Ajout des codes ISO réussi.
+2025-04-18 13:51:53.181 | INFO     | __main__:<module>:91 - Tableau de base pour les cartes généré.
+2025-04-18 13:51:53.602 | INFO     | __main__:<module>:123 - Ajout des informations de continent effectué.
+2025-04-18 13:51:53.616 | INFO     | __main__:<module>:137 - Tableau des continents généré.
+2025-04-18 13:51:53.692 | INFO     | __main__:<module>:180 - Fin de l'exécution de la page Répartition géographique.
+2025-04-18 13:51:56.672 | INFO     | __main__:<module>:19 - Début de la page Streamlit : Langages utilisés
+2025-04-18 13:51:56.675 | DEBUG    | __main__:<module>:26 - Chemin du fichier StackOverflow récupéré : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:51:57.201 | SUCCESS  | __main__:<module>:51 - Fichier chargé avec succès : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:52:00.017 | INFO     | __main__:<module>:69 - Dataframe des 20 langages les plus utilisés calculé avec succès
+2025-04-18 13:52:00.020 | ERROR    | __main__:<module>:88 - Erreur lors de la création du Dataframe : 'list' object has no attribute 'most_common'
+2025-04-18 13:52:01.282 | INFO     | __main__:<module>:22 - Début de la page Streamlit : Emplois et variables catégorielles
+2025-04-18 13:52:01.284 | DEBUG    | __main__:<module>:30 - Chemin du fichier StackOverflow récupéré : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:52:01.972 | SUCCESS  | __main__:<module>:57 - Fichier chargé avec succès : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:52:02.133 | INFO     | __main__:<module>:68 - Traduction des labels effectuée avec succès
+2025-04-18 13:52:02.232 | INFO     | __main__:<module>:83 - Génération des données agrégées effectuée avec succès
+2025-04-18 13:52:02.233 | INFO     | __main__:<module>:90 - Début de la génération des graphiques
+2025-04-18 13:52:04.097 | INFO     | __main__:<module>:23 - Début de la page Streamlit : Emplois et variables numériques
+2025-04-18 13:52:04.101 | DEBUG    | __main__:<module>:30 - Chemin du fichier StackOverflow récupéré : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:52:04.755 | SUCCESS  | __main__:<module>:58 - Fichier chargé avec succès : https://minio.lab.sspcloud.fr/amanseur/ensae-mise-en-prod-projet/data/StackOverflowSurvey.csv
+2025-04-18 13:52:06.490 | ERROR    | __main__:<module>:81 - Erreur lors de la création du Dataframe : 'list' object has no attribute 'most_common'
