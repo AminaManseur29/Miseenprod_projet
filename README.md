@@ -30,7 +30,8 @@ L'application est déployée (via Streamlit Cloud) et accessible à l'adresse su
 [https://ensae-project-genderequity.streamlit.app/](https://ensae-project-genderequity.streamlit.app/)
 
 L'application a aussi été déployée sur le SSPCloud et est accessible à l'adresse suivante : 
-
+[https://streamlit-ensae-project-genderequity.lab.sspcloud.fr/]
+(https://streamlit-ensae-project-genderequity.lab.sspcloud.fr/)
 
 ---
 
