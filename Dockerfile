@@ -1,5 +1,5 @@
-# Étape 1 : Base officielle
-FROM python:3.10-slim
+# Étape 1 : Image de base
+FROM python:3.8-slim
 
 # Étape 2 : Définir le répertoire de travail
 WORKDIR /app
