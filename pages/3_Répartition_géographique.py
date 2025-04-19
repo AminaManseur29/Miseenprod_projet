@@ -15,7 +15,10 @@ from src.data_preprocessing import (
 )
 from src.plot_utils import plot_choropleth_map
 
+# ==========================
 # Initialisation du logger
+# ==========================
+
 logger.add(
     "logs/repartition_geographique.log",
     rotation="1 MB",
@@ -24,8 +27,10 @@ logger.add(
 )
 logger.info("Début de la page Streamlit : Répartition géographique")
 
-
+# ==========================
 # Chargement des variables d'environnement
+# ==========================
+
 load_dotenv()
 stack_users_data_path = os.environ.get(
     "stack_users_data_path", "data/StackOverflowSurvey.csv"
@@ -39,7 +44,10 @@ logger.debug(f"Chemin des données StackOverflow : {stack_users_data_path}")
 logger.debug(f"Chemin des données pays/langue : {countries_lang_data_path}")
 logger.debug(f"URL des codes ISO : {iso_url}")
 
+# ==========================
 # Configuration de la page Streamlit
+# ==========================
+
 st.set_page_config(
     page_title="Répartition géographique", page_icon=":chart_with_upwards_trend:"
 )
@@ -59,6 +67,10 @@ st.markdown(
 
     """
 )
+
+# ==========================
+# Chargement et prétraitement des données
+# ==========================
 
 # Chargement des données
 try:
@@ -94,7 +106,10 @@ except Exception as e:
     st.error("Erreur lors de la préparation des données pour les cartes.")
     st.stop()
 
+# ==========================
 # Création des cartes
+# ==========================
+
 # 1. Carte du nb de développeurs par pays
 fig_nb = plot_choropleth_map(
     df=df_carto,
@@ -149,6 +164,10 @@ tab_nb, tab_taux, tab_cont = st.tabs(
     ]
 )
 
+# ==========================
+# Affichage des cartes
+# ==========================
+
 with tab_nb:
     st.plotly_chart(fig_nb)
 with tab_taux:
@@ -156,25 +175,54 @@ with tab_taux:
 with tab_cont:
     st.dataframe(df_carto_cont)
 
-st.markdown(
-    """
 
-    Les répondants sont répartis sur tous les continents de façon relativement satisfaisante. Ainsi,
-    l'Europe et l'Amérique du Nord et Centrale concentrent plus de 70% des répondants. L'Asie est
-    aussi plutôt bien représentée, avec 17% des répondants. Le principal écueil est que l'Amérique
-    du Sud, l'Océanie et l'Afrique sont peu représentés dans la base. Les pays les plus représentés
-    sont les États-Unis (20% des répondants), l'Allemagne (7%), l'Inde (7%), le Royaume-Uni (6%),
-    le Canada, la France et le Brésil (entre 3.5 et 4%).
+# ==========================
+# Création et affichage des commentaires automatisés des cartes
+# ==========================
 
-    Le taux d'emploi est globalement uniforme entre les pays et continents, entre 50 et 60%.
-    On note tout de même quelques valeurs élevées (dépassant les 65% voire atteignant plus de 70%
-    pour le Pérou et le Sri Lanka). Ces valeurs sont toutefois à relativiser du fait de la faible
-    taille des échantillons de répondants dans ces pays. Les valeurs les plus faibles, entre 40 et
-    45%, sont trouvées en Géorgie, Biélorussie, Ukraine et Russie. Ces valeurs sont surtout fiables
-    pour la Russie et l'Ukraine (où les échantillons de répondants sont suffisants). Du point de
-    vue des continents, le taux d'emploi semble légèrement plus faible en Europe que dans les
-    autres régions, et légèrement plus élevé en Afrique.
-    """
-)
+# Calcul du pourcentage de répondants par continent
+total_repondants = df_carto_cont["Nombre de répondants"].sum()
+df_carto_cont["Part en %"] = (
+    100 * df_carto_cont["Nombre de répondants"] / total_repondants
+).round(1)
+
+top_continents = df_carto_cont[df_carto_cont["Part en %"] > 10]
+low_continents = df_carto_cont[df_carto_cont["Part en %"] < 5]
+
+COMMENTAIRE = """- 🌍 **Répartition des répondants par continent** :"""
+
+# Continents bien représentés
+for _, row in top_continents.iterrows():
+    COMMENTAIRE += (
+        f"\n  - {row['Continent']} : {row['Part en %']}% des répondants",
+        f"(Taux d'emploi : {row["Taux d'emploi"]}%)"
+    )
+
+# Continents sous-représentés
+if not low_continents.empty:
+    COMMENTAIRE += (
+        "\n\n- ⚠️ **Sous-représentation** observée dans : "
+        + ", ".join(low_continents["Continent"])
+        + ". Cela peut limiter les analyses régionales dans ces zones."
+    )
+
+# Commentaire sur le taux d’emploi global
+mean_employment_rate = df_carto_cont["Taux d'emploi"].mean().round(1)
+if mean_employment_rate < 60:
+    COMMENTAIRE += f"""
+
+- 📉 **Taux d'emploi moyen** : {mean_employment_rate}% sur l'ensemble des continents.
+Cela reflète un accès à l'emploi modéré parmi les répondants.
+"""
+else:
+    COMMENTAIRE += f"""
+
+- 📈 **Taux d'emploi moyen** : {mean_employment_rate}% sur l'ensemble des continents.
+Cela montre une population majoritairement en emploi, avec toutefois des disparités régionales.
+"""
+
+# Affichage dans Streamlit
+st.markdown("### Synthèse automatisée")
+st.markdown(COMMENTAIRE)
 
 logger.info("Fin de l'exécution de la page Répartition géographique.")

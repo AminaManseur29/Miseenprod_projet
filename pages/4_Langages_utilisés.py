@@ -9,7 +9,10 @@ from loguru import logger
 from src.plot_utils import plot_hist, make_wordcloud, plot_bar
 from src.data_preprocessing import compute_top_languages_count
 
+# ==========================
 # Initialisation du logger
+# ==========================
+
 logger.add(
     "logs/langages_utilises.log",
     rotation="1 MB",
@@ -18,14 +21,20 @@ logger.add(
 )
 logger.info("Début de la page Streamlit : Langages utilisés")
 
+# ==========================
 # Chargement des variables d'environnement
+# ==========================
+
 load_dotenv()
 stack_users_data_path = os.environ.get(
     "stack_users_data_path", "data/StackOverflowSurvey.csv"
 )
 logger.debug(f"Chemin du fichier StackOverflow récupéré : {stack_users_data_path}")
 
-# Configuration de la page
+# ==========================
+# Configuration de la page Streamlit
+# ==========================
+
 st.set_page_config(
     page_title="Langages utilisés", page_icon=":chart_with_upwards_trend:"
 )
@@ -45,7 +54,10 @@ st.markdown(
     """
 )
 
-# Chargement des données depuis le répertoire ssp cloud
+# ==========================
+# Chargement et prétraitemet des données
+# ==========================
+
 try:
     stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
     logger.success(f"Fichier chargé avec succès : {stack_users_data_path}")
@@ -56,8 +68,16 @@ except Exception as e:
     )
     st.stop()
 
+
+# ==========================
+# Analyse des langages utilisés
+# ==========================
+
 # Génération nuage de mots pour vue globale
 fig_lang_cloud, lang_count = make_wordcloud(stack_users_df, "HaveWorkedWith")
+st.markdown(
+    """☁️ **Nuage de mots** : vue d'ensemble des langages mentionnés par les répondants."""
+)
 st.pyplot(fig_lang_cloud)
 
 # Dataframe réduit des 20 langages les plus utilisés
@@ -66,6 +86,7 @@ try:
         lang_count.most_common(20), columns=["Langage", "Count"], index=range(1, 21)
     )
     logger.info("Dataframe des 20 langages les plus utilisés calculé avec succès")
+
 except Exception as e:
     logger.error(f"Erreur lors de la création du Dataframe : {e}")
     st.error("Erreur lors du traitement des données.")
@@ -74,7 +95,9 @@ except Exception as e:
 # Dataframe réduit des 10 langages les plus maîtrisés parmi les 20 plus utilisés
 try:
     top_languages = pd.DataFrame(
-        lang_count.most_common(10), columns=["Langage", "Nombre d'occurences"], index=range(1, 11)
+        lang_count.most_common(10),
+        columns=["Langage", "Nombre d'occurences"],
+        index=range(1, 11),
     )
     top_lang_alter = compute_top_languages_count(
         stack_users_df, "HaveWorkedWith", top_languages["Langage"].tolist()
@@ -82,33 +105,44 @@ try:
     logger.info(
         "Dataframe des 10 langages mieux maîtrisés parmi les 20 plus fréquents calculé avec succès"
     )
+
 except Exception as e:
     logger.error(f"Erreur lors de la création du Dataframe : {e}")
     st.error("Erreur lors du traitement des données.")
     st.stop()
 
-
+# ==========================
 # Génération des graphiques
+# ==========================
+
 logger.info("Début de la génération des graphiques")
 
 # 1. Graphe Langages les plus employés
 fig_lang = plot_bar(top_languages20, "Langage", "Les 20 langages les plus employés")
 st.plotly_chart(fig_lang)
 
+# Statistiques descriptives sur les plus fréquents
+most_used_langs = top_languages20.head(4)
+max_usage = most_used_langs.iloc[0]["Count"] / stack_users_df.shape[0] * 100
+st.markdown(
+    f"""- 🔝 **Top 20 langages** : {', '.join(most_used_langs['Langage'])}
+    sont les plus cités. Le plus populaire ({most_used_langs.iloc[0]['Langage']}) est utilisé
+    par environ {max_usage:.1f}% des répondants."""
+)
+
 # Mesure alternative des compétences en informatique
 st.markdown(
     """
     ### Une mesure alternative des compétences en informatique
-    
-    Jusqu'ici, les compétences en informatique étaient mesurées via la variable `ComputerSkills` 
-    qui comptait le nombre de langages maîtrisés par chaque développeur. Ici, on crée une mesure 
-    alternative des compétences en informatique grâce à un décompte des langages maîtrisés parmi 
+
+    Jusqu'ici, les compétences en informatique étaient mesurées via la variable `ComputerSkills`
+    qui comptait le nombre de langages maîtrisés par chaque développeur. Ici, on crée une mesure
+    alternative des compétences en informatique grâce à un décompte des langages maîtrisés parmi
     les 10 langages les plus courants dans la base.
 
-    On obtient la distribution suivante : 
+    On obtient la distribution suivante :
     """
 )
-
 
 # 2. Graphe Langages les plus employés parmi les top 10 langages
 fig_lang_alter = plot_hist(
@@ -119,19 +153,25 @@ fig_lang_alter = plot_hist(
 )
 st.plotly_chart(fig_lang_alter)
 
-
-# Conclusion finale
+# Statistiques
+competence_mean = top_lang_alter["TopLanguagesCount"].mean()
+competence_pct = (top_lang_alter["TopLanguagesCount"] >= 1).mean() * 100
 st.markdown(
-    """
-    Les langages utilisés sont donc très concentrés. Les 4 premiers langages 
-    (JavaScript, Docker, HTML/CSS et SQL) sont tous utilisés par plus de 50% des répondants,
-    et jusqu'à 67% pour JavaScript.
-
-    Lorsque l'on compte le nombre de langages maîtrisés parmi les 10 langages les plus cités
-    dans la base, on trouve des résultats cohérents. Ainsi, presque l'intégralité (98%) 
-    des répondants maîtrisent au moins 1 de ces 10 langages. En moyenne, les répondants 
-    en maîtrisent 5. 
-    """
+    f"""- 🧠 **Compétence informatique (alternative)** : en moyenne, les répondants
+    maîtrisent {competence_mean:.1f} langages parmi les 10 principaux. {competence_pct:.1f}% en
+    connaissent au moins un."""
 )
 
+# ==========================
+# Conclusion automatisée
+# ==========================
+
+conclusion = f"""
+Les langages de programmation sont très concentrés.
+{most_used_langs.iloc[0]['Langage']} domine avec un usage par environ {max_usage:.1f}%
+des répondants. Presque {competence_pct:.1f}% des participants maîtrisent au moins un des
+10 langages principaux, avec une moyenne de {competence_mean:.1f} langages par répondant.
+"""
+st.markdown("**Conclusion automatisée**")
+st.markdown(conclusion)
 logger.info("Fin de l'exécution de la page Langages utilisés")

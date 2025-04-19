@@ -11,7 +11,10 @@ from loguru import logger
 from src.data_preprocessing import labels_translation
 from src.plot_utils import plot_hist, plot_hist_orders
 
+# ==========================
 # Initialisation du logger
+# ==========================
+
 logger.add(
     "logs/distribution_variables.log",
     rotation="1 MB",
@@ -20,14 +23,20 @@ logger.add(
 )
 logger.info("Début de la page Streamlit : Distribution des variables principales")
 
+# ==========================
 # Chargement des variables d'environnement
+# ==========================
+
 load_dotenv()
 stack_users_data_path = os.environ.get(
     "stack_users_data_path", "data/StackOverflowSurvey.csv"
 )
 logger.debug(f"Chemin du fichier StackOverflow récupéré : {stack_users_data_path}")
 
-# Configuration de la page
+# ==========================
+# Configuration de la page Streamlit
+# ==========================
+
 st.set_page_config(
     page_title="Distribution des variables principales",
     page_icon=":chart_with_upwards_trend:",
@@ -48,9 +57,13 @@ st.markdown(
     le nombre d'années de code dans le cadre professionnel, le salaire précédent,
     et les compétences en informatique.
 
-    Vous pouvez utiliser les flèches pour naviguer entre les graphiques.
+    Vous pouvez naviguer entre les graphiques via les différents onglets.
     """
 )
+
+# ==========================
+# Chargement et prétraitement des données
+# ==========================
 
 # Chargement des données depuis le répertoire sspcloud
 try:
@@ -72,7 +85,10 @@ except Exception as e:
     st.error("Erreur lors du traitement des données.")
     st.stop()
 
+# ==========================
 # Génération des graphiques
+# ==========================
+
 logger.info("Début de la génération des graphiques")
 
 # 1. Graphe Age
@@ -140,6 +156,10 @@ tab_age, tab_genre, tab_ed, tab_branch, tab_code, tab_codepro, tab_salaire, tab_
     )
 )
 
+# ==========================
+# Affichage des graphiques
+# ==========================
+
 with tab_age:
     st.plotly_chart(fig_age)
 with tab_genre:
@@ -158,26 +178,88 @@ with tab_salaire:
 with tab_info:
     st.plotly_chart(fig_info)
 
-st.markdown(
-    """
-    Les répondants sont majoritairement jeunes (65% ont moins de 35 ans).
-    Plus de 93% sont des hommes, ce qui est le défaut principal de notre base.
-    Environ 50% des répondants ont un niveau licence, et 25% un master.
-    La plus grande partie de la base travaille dans le développement (plus de 91%).
 
-    Le nombre d'années de codage est très dispersé,
-    atteignant jusqu'à 50 ans pour les répondants ayant le plus d'ancienneté de codage.
-    On remarque toutefois un pic autour de 10 années de codage
-    (ce qui est cohérent avec l'âge plutôt jeune des répondants).
-    Le nombre d'années de codage dans le cadre professionnel est légèrement moins élevé et moins
-    dispersé, avec un pic plutôt autour de 4 ans de codage.
+# ==========================
+# Création et affichage des commentaires automatisés des graphiques
+# ==========================
 
-    Le salaire précédent est aussi extrêmement dispersé.
+# Initialisation des commentaires
+COMMENTAIRE = ""
 
-    Enfin, les compétences en informatique, mesurées ici par le nombre de langages maîtrisés,
-    semble suivre une gaussienne avec en moyenne une dizaine de langages. On remarque quelques
-    valeurs extrêmes de répondants maitrisant plus de 50 langages.
-    """
+# 1. Âge
+age_counts = stack_users_df_fr["Age"].value_counts(normalize=True)
+if "Moins de 35 ans" in age_counts:
+    pct_jeunes = round(100 * age_counts["Moins de 35 ans"], 1)
+    COMMENTAIRE += f"- 👶 **{pct_jeunes}%** des répondants ont moins de 35 ans.\n"
+if "Plus de 35 ans" in age_counts:
+    pct_plus_35 = round(100 * age_counts["Plus de 35 ans"], 1)
+    COMMENTAIRE += f"- 👴 **{pct_plus_35}%** des répondants ont 35 ans ou plus.\n"
+
+# 2. Genre
+genre_counts = stack_users_df_fr["Gender"].value_counts(normalize=True)
+if "Homme" in genre_counts:
+    pct_hommes = round(100 * genre_counts["Homme"], 1)
+    COMMENTAIRE += (
+        f"- 👨‍💻 Les hommes représentent environ **{pct_hommes}%** des répondants.\n"
+    )
+if "Femme" in genre_counts:
+    pct_femmes = round(100 * genre_counts["Femme"], 1)
+    COMMENTAIRE += (
+        f"- 👩‍💻 Les femmes représentent environ **{pct_femmes}%** des répondants.\n"
+    )
+if "Autre" in genre_counts:
+    pct_autre = round(100 * genre_counts["Autre"], 1)
+    COMMENTAIRE += f"- 🚻 **{pct_autre}%** des répondants se considèrent dans une autre catégorie.\n"
+
+# 3. Niveau d'éducation
+ed_counts = stack_users_df_fr["EdLevel"].value_counts(normalize=True)
+licence_pct = round(100 * ed_counts.get("Licence", 0), 1)
+master_pct = round(100 * ed_counts.get("Master", 0), 1)
+doctorat_pct = round(100 * ed_counts.get("Doctorat", 0), 1)
+COMMENTAIRE += (
+    f"- 🎓 Environ **{licence_pct}%** ont une licence, "
+    f"**{master_pct}%** un master et **{doctorat_pct}%** un doctorat.\n"
 )
+
+# 4. Branche professionnelle
+branch_counts = stack_users_df_fr["MainBranch"].value_counts(normalize=True)
+dev_pct = round(100 * branch_counts.iloc[0], 1)
+branche_dev = branch_counts.index[0]
+COMMENTAIRE += (
+    f"- 🧑‍💼 **{branche_dev}** est la branche la plus représentée (**{dev_pct}%**).\n"
+)
+
+# 5. Langages (Compétences en informatique)
+skills_series = pd.to_numeric(stack_users_df_fr["ComputerSkills"], errors="coerce")
+skill_mean = round(skills_series.mean(), 1)
+COMMENTAIRE += (
+    f"- 💡 Les répondants connaissent en moyenne **{skill_mean} langages** informatiques.\n"
+)
+
+# 6. Années de code
+years_code_series = pd.to_numeric(stack_users_df_fr["YearsCode"], errors="coerce")
+years_code_mean = round(years_code_series.mean(), 1)
+COMMENTAIRE += (
+    f"- 💻 Les répondants ont en moyenne **{years_code_mean} années de code**.\n"
+)
+
+# 7. Années de code professionnel
+years_codepro_series = pd.to_numeric(stack_users_df_fr["YearsCodePro"], errors="coerce")
+years_codepro_mean = round(years_codepro_series.mean(), 1)
+COMMENTAIRE += (
+    f"- 💼 Les répondants ont en moyenne **{years_codepro_mean} années "
+    f"d'expérience professionnelle**.\n"
+)
+
+# 8. Salaire précédent
+salary_series = pd.to_numeric(stack_users_df_fr["PreviousSalary"], errors="coerce")
+salary_mean = round(salary_series.mean(), 1)
+COMMENTAIRE += (
+    f"- 💸 Le salaire précédent moyen des répondants est de **{salary_mean}**$.\n"
+)
+
+# 🔽 Affichage
+st.markdown("### Synthèse automatisée")
+st.markdown(COMMENTAIRE)
 
 logger.info("Fin de l'exécution de la page Distribution des variables principales")

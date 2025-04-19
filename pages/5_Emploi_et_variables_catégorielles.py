@@ -11,8 +11,10 @@ from src.plot_utils import (
 )
 from src.data_preprocessing import group_percentage_by, labels_translation
 
-
+# ==========================
 # Initialisation du logger
+# ==========================
+
 logger.add(
     "logs/emplois_vars_cat.log",
     rotation="1 MB",
@@ -21,15 +23,20 @@ logger.add(
 )
 logger.info("Début de la page Streamlit : Emplois et variables catégorielles")
 
-
+# ==========================
 # Chargement des variables d'environnement
+# ==========================
+
 load_dotenv()
 stack_users_data_path = os.environ.get(
     "stack_users_data_path", "data/StackOverflowSurvey.csv"
 )
 logger.debug(f"Chemin du fichier StackOverflow récupéré : {stack_users_data_path}")
 
-# Configuration de la page
+# ==========================
+# Configuration de la page Streamlit
+# ==========================
+
 st.set_page_config(
     page_title="Emploi et variables catégorielles",
     page_icon=":chart_with_upwards_trend:",
@@ -51,7 +58,10 @@ st.markdown(
     """
 )
 
-# Chargement des données depuis le répertoire sspcloud
+# ==========================
+# Chargement et prétraitement des données
+# ==========================
+
 try:
     stack_users_df = pd.read_csv(stack_users_data_path, index_col="Unnamed: 0")
     logger.success(f"Fichier chargé avec succès : {stack_users_data_path}")
@@ -86,7 +96,10 @@ except Exception as e:
     st.error("Erreur lors du traitement des données.")
     st.stop()
 
+# ==========================
 # Génération des graphiques
+# ==========================
+
 logger.info("Début de la génération des graphiques")
 
 # 1. Graphe Age
@@ -109,7 +122,6 @@ fig_gender = plot_bar_orders(
     x_col="percentage",
 )
 
-
 # 3. Graphe Niveau d'éducation
 fig_edLevel = plot_bar_orders(
     edLevel_df,
@@ -128,7 +140,6 @@ fig_edLevel = plot_bar_orders(
     x_col="percentage",
 )
 
-
 # 4. Graphe Branche pro
 fig_workbranch = plot_bar_orders(
     workbranch_df,
@@ -139,8 +150,10 @@ fig_workbranch = plot_bar_orders(
     x_col="percentage",
 )
 
+# ==========================
+# Choix du graphe à afficher sur Streamlit
+# ==========================
 
-# Choix du graphe
 tab_age, tab_genre, tab_ed, tab_branch = st.tabs(
     ["Age", "Genre", "Niveau d'éducation", "Branche professionnelle"]
 )
@@ -154,32 +167,36 @@ with tab_ed:
 with tab_branch:
     st.plotly_chart(fig_workbranch)
 
+# ==========================
+# Création et affichage des commentaires automatisés des graphiques
+# ==========================
+
 st.markdown(
     """
-    **Pour rappel, le taux d'emploi moyen sur l'ensemble de la 
+    **Pour rappel, le taux d'emploi moyen sur l'ensemble de la
     base est de 54%.**
 
-    Les moins de 35 ans semblent donc légèrement plus employés 
-    que les plus de 35%. Les femmes sont beaucoup moins employées, 
+    Les moins de 35 ans semblent donc légèrement plus employés
+    que les plus de 35%. Les femmes sont beaucoup moins employées,
     avec près de 10 points d'écart. Le taux d'emploi des personnes
-    non-binaires est plus élevé, mais l'échantillon est très faible. 
-    
+    non-binaires est plus élevé, mais l'échantillon est très faible.
+
     Le niveau d'éducation semble aussi beaucoup jouer dans l'emploi,
     avec un taux d'emploi plus élevé pour les répondants ayant un niveau
-    licence ou inférieur. A l'inverse, il est très faible pour les 
-    titulaires d'un doctorat (29%). 
+    licence ou inférieur. A l'inverse, il est très faible pour les
+    titulaires d'un doctorat (29%).
 
-    Enfin, les répondants travaillant dans le développement 
-    sont plus employées ici (mais elles constituent 
+    Enfin, les répondants travaillant dans le développement
+    sont plus employées ici (mais elles constituent
     l'essentiel de la base).
 
     La principale source de biais injustifié que l'on relève
-    dans cette analyse est donc le genre. C'est la variable sur 
-    laquelle on se concentre dans la suite de la modélisation. 
+    dans cette analyse est donc le genre. C'est la variable sur
+    laquelle on se concentre dans la suite de la modélisation.
     On vérifiera notamment si le biais qui semble se dessiner
-    ici est bien significatif, et s'il n'est pas simplement 
-    dû à une corrélation du genre avec d'autres variables qui 
-    peuvent expliquer l'employabilité (par exemple, 
+    ici est bien significatif, et s'il n'est pas simplement
+    dû à une corrélation du genre avec d'autres variables qui
+    peuvent expliquer l'employabilité (par exemple,
     le niveau d'éducation).
     """
 )
