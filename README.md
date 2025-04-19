@@ -92,27 +92,24 @@ source env/bin/activate        # Sous Windows : env\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## 🔐 Fichier .env
-Créer un fichier .env à la racine du projet contenant les chemins vers les jeux de données hébergés sur le cloud (par ex. SSPCloud) :
-
-```bash
-stack_users_data_path=...
-countries_lang_data_path=...
-iso_url=...
-```
-### Explication :
-- **stack_users_data_path** : Cette variable pointe vers les données d'enquête StackOverflow, qui sont utilisées pour analyser les utilisateurs.
-- **countries_lang_data_path** : Elle est utilisée pour localiser un fichier avec des informations supplémentaires sur les pays et les langues.
-- **iso_url** : L'URL de cette variable sert à accéder à une ressource en ligne contenant des données ISO, utiles pour l'analyse.
-
 ## 🚀 Lancer l'application Streamlit
-Après avoir effectué les installations nécessaires, l'application Streamlit peut être lancée directement depuis un terminal via :
+Une fois les installations effectuées, vous pouvez lancer l’application en exécutant la commande suivante dans un terminal :
 ```bash
 streamlit run Accueil.py
 ```
-Suite à cette commande, une fenêtre devrait s'ouvrir indiquant "Your application running on port ... is available". Il suffit alors de cliquer sur "Open in Browser" pour l'ouvrir. 
 
-Si la fenêtre ne s'affiche pas, il faut aller dans l'onglet "PORTS" et cliquer sur l'icône 🌐 dans "Forwarded Address" pour accéder à l'application. 
+Trois cas peuvent alors se présenter :
+
+✅ Une fenêtre s’ouvre automatiquement avec le message :
+"Your application running on port ... is available"
+→ Cliquez sur "Open in Browser".
+
+🌐 Trois liens sont affichés (Local / Network / External URL) :
+→ Cliquez sur le lien Local URL (ex. http://localhost:8501).
+
+🛠 Si rien ne se lance :
+→ Allez dans l’onglet "PORTS" (dans VSCode ou Onyxia),
+puis cliquez sur l’icône 🌐 "Open in Browser" dans la colonne "Forwarded Address" pour ouvrir l’app dans le navigateur.
 
 ## 📊 Fonctionnalités de l'application
 L'application Streamlit permet :
@@ -125,6 +122,19 @@ L'application Streamlit permet :
 - Données enrichies par : 
       - du web scraping,
       - des fichiers Excel externes (langues, pays, ISO...).
+
+## 🔐 Fichier .env
+Le fichier .env, déjà présent à la racine du projet, contient les chemins vers les jeux de données publics utilisés dans l’application. Ces données sont hébergées sur des ressources accessibles librement (comme le SSPCloud).
+
+```bash
+stack_users_data_path=...
+countries_lang_data_path=...
+iso_url=...
+```
+### Explication :
+- **stack_users_data_path** : chemin vers les données de l’enquête StackOverflow utilisées pour analyser les utilisateurs.
+- **countries_lang_data_path** : chemin vers les données contenant des informations supplémentaires sur les pays et les langues.
+- **iso_url** : URL d’une ressource en ligne contenant notamment les codes ISO des pays.
 
 ## 📓 Notebook
 Un seul notebook synthétise l’analyse : notebooks/Notebook_Project.ipynb
