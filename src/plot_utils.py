@@ -109,7 +109,7 @@ def plot_bar(data, col, title):
         x="Count",
         y=col,
         orientation="h",
-        text_auto=True,
+        text="Count",
         color="Count",
         color_continuous_scale="darkmint",
     )
@@ -123,6 +123,7 @@ def plot_bar(data, col, title):
         width=800,
         height=700,
     )
+    return fig
 
 
 def plot_bar_orders(data, y_col, color_col, title, cat_orders, x_col="percentage"):
@@ -155,7 +156,7 @@ def plot_bar_orders(data, y_col, color_col, title, cat_orders, x_col="percentage
         x=x_col,
         y=y_col,
         color=color_col,
-        text_auto=True,
+        text=x_col,
         category_orders=cat_orders,
         color_discrete_sequence=px.colors.qualitative.Pastel,
     )

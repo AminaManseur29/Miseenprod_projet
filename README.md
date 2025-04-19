@@ -34,26 +34,25 @@ Vous pouvez tester l'application en temps réel en suivant ce lien.
 
 ```bash
 .
-├── data/                    # Données brutes et nettoyées
-├── logs/                   # Logs des différents scripts
-├── notebooks/              # Notebook principal du projet
-├── output/                 # Résultats des modèles
-├── pages/                  # Pages de l'application Streamlit
-├── pictures/               # Images utilisées dans le README
+├── data/                                # Données brutes et nettoyées
+├── logs/                                # Logs des différents scripts
+├── notebooks/                           # Notebook principal du projet
+├── output/                              # Résultats des modèles
+├── pages/                               # Pages de l'application Streamlit
+├── pictures/                            # Images utilisées dans le README
 ├── src/
-│   ├── __init__.py         # Fichier d'initialisation du package
-│   ├── data_preprocessing.py # Scripts de nettoyage et de préparation des données
-│   ├── models_baseline_train_save.py             # Entraînement et sauvegarde des modèles de base
-│   ├── models_mitigated_train_save.py         # Entraînement et sauvegarde des modèles atténués
-    ├── models_visualisation_utils.py          # Utilitaires pour la visualisation des modèles
-    └── plot_utils.py       # Utilitaires pour la création de graphiques
-              # Logique principale de l'application
-├── .env                    # Variables d’environnement
-├── .gitignore              # Fichiers et dossiers ignorés par Git
-├── Accueil.py              # Page d'accueil de l'application Streamlit
-├── LICENCE                 # Licence du projet
-├── README.md               # Documentation du projet
-└── requirements.txt        # Dépendances Python
+│   ├── __init__.py                      # Fichier d'initialisation du package
+│   ├── data_preprocessing.py            # Scripts de nettoyage et de préparation des données
+│   ├── models_baseline_train_save.py    # Entraînement et sauvegarde des modèles de base
+│   ├── models_mitigated_train_save.py   # Entraînement et sauvegarde des modèles atténués
+│   ├── models_visualisation_utils.py    # Utilitaires pour la visualisation des modèles
+│   └── plot_utils.py                    # Utilitaires pour la création de graphiques
+├── .env                                 # Variables d’environnement
+├── .gitignore                           # Fichiers et dossiers ignorés par Git
+├── Accueil.py                           # Page d'accueil de l'application Streamlit
+├── LICENCE                              # Licence du projet
+├── README.md                            # Documentation du projet
+└── requirements.txt                     # Dépendances Python
 
 ```
 ---
@@ -68,6 +67,12 @@ cd Miseenprod_projet
 ```
 
 ### 2. Créer et activer un environnement virtuel
+
+Si vous utilisez le SSPCloud, il faut dans un premier temps désactiver l'environnement virtuel par défaut de la plateforme avec : 
+```bash
+conda deactivate
+```
+Ensuite, vous pouvez créer votre environnement avec : 
 ```bash
 python -m venv env
 source env/bin/activate        # Sous Windows : env\Scripts\activate
@@ -92,10 +97,13 @@ iso_url=...
 - **iso_url** : L'URL de cette variable sert à accéder à une ressource en ligne contenant des données ISO, utiles pour l'analyse.
 
 ## 🚀 Lancer l'application Streamlit
-Après avoir effectué les installations nécessaires, l'application Stremlit peut être lancée directement depuis un terminal via :
+Après avoir effectué les installations nécessaires, l'application Streamlit peut être lancée directement depuis un terminal via :
 ```bash
 streamlit run Accueil.py
 ```
+Suite à cette commande, une fenêtre devrait s'ouvrir indiquant "Your application running on port ... is available". Il suffit alors de cliquer sur "Open in Browser" pour l'ouvrir. 
+
+Si la fenêtre ne s'affiche pas, il faut aller dans l'onglet "PORTS" et cliquer sur l'icône 🌐 dans "Forwarded Address" pour accéder à l'application. 
 
 ## 📊 Fonctionnalités de l'application
 L'application Streamlit permet :
