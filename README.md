@@ -4,6 +4,9 @@
   <img src="https://img.shields.io/badge/Python-3.8-blue.svg" alt="Python 3.8" />
   <img src="https://img.shields.io/badge/Streamlit-1.0-orange.svg" alt="Streamlit" />
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License MIT" />
+  <a href="https://github.com/AminaManseur29/Miseenprod_projet/actions/workflows/prod.yaml">
+    <img src="https://github.com/AminaManseur29/Miseenprod_projet/actions/workflows/prod.yaml/badge.svg" alt="Construction image Docker" />
+  </a>
 </p>
 
 ---
@@ -23,10 +26,11 @@ Le projet comprend :
 
 ## 🌐 Accéder à l'application déployée
 
-L'application est déployée et accessible à l'adresse suivante :  
-[https://miseenappprojet-zrcijatvpprbtfrd46xevu.streamlit.app/](https://miseenappprojet-zrcijatvpprbtfrd46xevu.streamlit.app/)
+L'application est déployée (via Streamlit Cloud) et accessible à l'adresse suivante :  
+[https://ensae-project-genderequity.streamlit.app/](https://ensae-project-genderequity.streamlit.app/)
 
-Vous pouvez tester l'application en temps réel en suivant ce lien.
+L'application a aussi été déployée sur le SSPCloud et est accessible à l'adresse suivante : 
+
 
 ---
 
