@@ -195,7 +195,7 @@ COMMENTAIRE = """- 🌍 **Répartition des répondants par continent** :"""
 for _, row in top_continents.iterrows():
     COMMENTAIRE += (
         f"\n  - {row['Continent']} : {row['Part en %']}% des répondants",
-        f"(Taux d'emploi : {row["Taux d'emploi"]}%)"
+        f"(Taux d'emploi : {row['Taux d\'emploi']}%)"
     )
 
 # Continents sous-représentés
