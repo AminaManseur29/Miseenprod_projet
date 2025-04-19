@@ -26,12 +26,16 @@ Le projet comprend :
 
 ## 🌐 Accéder à l'application déployée
 
-L'application est déployée (via Streamlit Cloud) et accessible à l'adresse suivante :  
+- Dans un premier temps, l'application a été déployée via Streamlit Cloud et peut être accessible à l'adresse suivante :  
 [https://ensae-project-genderequity.streamlit.app/](https://ensae-project-genderequity.streamlit.app/)
 
-L'application a aussi été déployée sur le SSPCloud et est accessible à l'adresse suivante : 
+- Par la suite, l'application a également été déployée sur le SSPCloud et est accessible à l'adresse suivante : 
 [https://streamlit-ensae-project-genderequity.lab.sspcloud.fr/]
 (https://streamlit-ensae-project-genderequity.lab.sspcloud.fr/)
+
+Le déploiement, sur le SSPCloud, de notre application est contrôlée par un autre dépôt GitHub : [https://github.com/AminaManseur29/application-deployment]
+(https://github.com/AminaManseur29/application-deployment)
+
 
 ---
 
