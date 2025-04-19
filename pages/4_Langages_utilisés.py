@@ -77,7 +77,7 @@ try:
         lang_count.most_common(10), columns=["Langage", "Nombre d'occurences"], index=range(1, 11)
     )
     top_lang_alter = compute_top_languages_count(
-        stack_users_df, "HaveWorkedWith", top_languages
+        stack_users_df, "HaveWorkedWith", top_languages["Langage"].tolist()
     )
     logger.info(
         "Dataframe des 10 langages mieux maîtrisés parmi les 20 plus fréquents calculé avec succès"
