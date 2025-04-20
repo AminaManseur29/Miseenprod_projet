@@ -187,21 +187,24 @@ df_carto_cont["Part en %"] = (
 ).round(1)
 
 top_continents = df_carto_cont[df_carto_cont["Part en %"] > 10]
-low_continents = df_carto_cont[df_carto_cont["Part en %"] < 5]
+low_continents = df_carto_cont[df_carto_cont["Part en %"] < 10]
 
 COMMENTAIRE = """- 🌍 **Répartition des répondants par continent** :"""
 
 # Continents bien représentés
 for _, row in top_continents.iterrows():
+    continent = row['Continent']
+    pourcentage = row['Part en %']
+    employed_rate = row['Taux d\'emploi']
     COMMENTAIRE += (
-        f"\n - {row['Continent']} : {row['Part en %']}% des répondants"
-        f" (Taux d'emploi : {row["Taux d'emploi"]}%)"
+        f"\n - {continent} : {pourcentage}% des répondants"
+        f" (Taux d'emploi : {employed_rate}%)"
     )
 
 # Continents sous-représentés
 if not low_continents.empty:
     COMMENTAIRE += (
-        "\n\n- ⚠️ **Sous-représentation** observée dans : "
+        "\n\n- ⚠️ **Sous-représentation** observée en : "
         + ", ".join(low_continents["Continent"])
         + ". Cela peut limiter les analyses régionales dans ces zones."
     )
